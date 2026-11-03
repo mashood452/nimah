@@ -1,0 +1,22 @@
+.slot {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: var(--nm-surface);
+  border: 1px solid var(--nm-line);
+}
+.photo {
+  object-fit: cover;
+}
+/* shown only while developing, so you can see which file name a slot is waiting for */
+.hint {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 6px 10px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--nm-accent);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--nm-line);
+}

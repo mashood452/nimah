@@ -315,7 +315,7 @@ export function Navbar({ accountName }: { accountName?: string }) {
           </button>
         </div>
 
-        {drawerOpen && <CaptchaSearchForm className={styles.drawerSearch} placeholder="Search eyewear" icon={<IconSearch />} />}
+        {drawerOpen && <CaptchaSearchForm formClassName={styles.drawerSearchForm} className={styles.drawerSearch} placeholder="Search eyewear" icon={<IconSearch />} />}
 
         <nav className={styles.drawerNav} aria-label="Mobile">
           {navItems.map((item) => {

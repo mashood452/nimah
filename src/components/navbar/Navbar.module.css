@@ -501,6 +501,9 @@
   visibility: hidden;
   transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0.42s;
   overflow-y: auto;
+  /* the drawer only ever scrolls up and down */
+  overflow-x: hidden;
+  overscroll-behavior: contain;
 }
 .drawer[data-open="true"] {
   transform: none;
@@ -518,15 +521,30 @@
   justify-self: start;
   --logo-h: 56px;
 }
+/* the search form, including its small reCAPTCHA notice, keeps the same side padding as the menu links */
+.drawerSearchForm {
+  margin-bottom: 8px !important;
+  padding: 0 18px;
+  min-width: 0;
+}
 .drawerSearch {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 18px 18px 6px;
-  padding: 12px 16px;
+  gap: 10px;
+  min-width: 0;
+  margin: 18px 0 0;
+  padding: 8px 8px 8px 14px;
   color: var(--nm-accent);
   border: 1px solid var(--nm-line);
   border-radius: 0;
+}
+.drawerSearch svg {
+  flex: none;
+}
+.drawerSearch button {
+  flex: none;
+  min-height: 42px;
+  padding: 10px 16px;
 }
 .drawerSearch input {
   flex: 1;

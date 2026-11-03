@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { formatPrice } from "@/lib/format";
 import { colorName } from "@/lib/product-info";
-import { siteConfig } from "@/lib/site";
 import { useCart, useCartDrawer, useWishlist } from "@/lib/shop-store";
 import { IconArrow, IconBag, IconHeart } from "../navbar/icons";
+import { Price } from "../ui/Price";
 import type { Product } from "./products-data";
 import styles from "./Product.module.css";
 
@@ -31,8 +30,8 @@ export function ProductPurchase({ product: p }: { product: Product }) {
     <div className={styles.buy}>
       <div className={styles.priceRow}>
         <div className={styles.priceGroup}>
-          <p className={styles.price}>{formatPrice(p.price)}</p>
-          <p className={styles.priceNote}>Price in {siteConfig.currency}</p>
+          <p className={styles.price}><Price amount={p.price} /></p>
+          <p className={styles.priceNote}>Price in UAE dirhams</p>
         </div>
 
         {/* quick add, sitting above the colour choice: adds the selected colour and quantity */}

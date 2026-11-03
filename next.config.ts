@@ -31,8 +31,33 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["nodemailer"],
   // Resolve database-backed metadata before headers are sent, including missing-slug 404s.
   htmlLimitedBots: /.*/,
+  // The framework name is not useful to visitors, so it is not announced in every response.
+  poweredByHeader: false,
   images: {
     remotePatterns: mediaImagePatterns(),
+    // Optimised photos are named by content (for example "-v2"), so browsers and the CDN may keep them for 30 days.
+    minimumCacheTTL: 60 * 60 * 24 * 30,
+  },
+  async headers() {
+    const day = 60 * 60 * 24;
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          // HTTPS only for a year, subdomains included (the media subdomain is HTTPS too).
+          { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=()" },
+        ],
+      },
+      {
+        // Static brand and site images in /public are never changed in place, so they cache for 30 days.
+        source: "/:folder(images|brand)/:path*",
+        headers: [{ key: "Cache-Control", value: `public, max-age=${day * 30}, stale-while-revalidate=${day}` }],
+      },
+    ];
   },
 };
 

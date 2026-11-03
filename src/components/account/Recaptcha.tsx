@@ -11,17 +11,21 @@ declare global {
   }
 }
 
-const CaptchaContext = createContext<{ ready: boolean; error: boolean; executeCaptcha: (action: CaptchaAction) => Promise<string> } | null>(null);
+const CaptchaContext = createContext<{ ready: boolean; error: boolean; executeCaptcha: (action: CaptchaAction) => Promise<string>; request: () => void } | null>(null);
 
 export function RecaptchaProvider({ children }: { children: ReactNode }) {
   const key = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
+  // The Google script is heavy, so it only loads once a form that needs it is on the page (see useRecaptcha).
+  // Pages without a form, such as the home page, never download it.
+  const [wanted, setWanted] = useState(false);
+  const request = useCallback(() => setWanted(true), []);
   useEffect(() => {
-    if (ready || !key) return;
+    if (ready || !key || !wanted) return;
     const timeout = window.setTimeout(() => setError(true), 15_000);
     return () => window.clearTimeout(timeout);
-  }, [ready, key]);
+  }, [ready, key, wanted]);
 
   const executeCaptcha = useCallback(async (action: CaptchaAction) => {
     if (!key || !ready || !window.grecaptcha?.execute) throw new Error("The security check is unavailable. Please refresh and try again.");
@@ -35,15 +39,18 @@ export function RecaptchaProvider({ children }: { children: ReactNode }) {
     });
   }, [key, ready]);
 
-  return <CaptchaContext.Provider value={{ ready, error: error || !key, executeCaptcha }}>
+  return <CaptchaContext.Provider value={{ ready, error: error || !key, executeCaptcha, request }}>
     {children}
-    {key && <Script id="nimah-recaptcha-v3" src={`https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(key)}`} strategy="afterInteractive"
+    {key && wanted && <Script id="nimah-recaptcha-v3" src={`https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(key)}`} strategy="afterInteractive"
       onReady={() => window.grecaptcha?.ready(() => { setError(false); setReady(true); })} onError={() => { setError(true); setReady(false); }} />}
   </CaptchaContext.Provider>;
 }
 
 export function useRecaptcha() {
   const context = useContext(CaptchaContext);
+  const request = context?.request;
+  // Using the hook means a form is on the page, so this is the moment to load the Google script.
+  useEffect(() => request?.(), [request]);
   if (!context) throw new Error("RecaptchaProvider is required.");
   return context;
 }

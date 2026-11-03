@@ -53,6 +53,30 @@ a {
   text-decoration: none;
 }
 
+/* keyboard and screen reader shortcut past the navigation; hidden until it receives focus */
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  padding: 14px 22px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  background: var(--nm-accent);
+  transform: translateY(-200%);
+  transition: transform 0.2s ease;
+}
+.skip-link:focus-visible {
+  transform: none;
+  outline: 2px solid var(--nm-champagne);
+  outline-offset: 2px;
+}
+#main:focus {
+  outline: none;
+}
+
 img {
   display: block;
   max-width: 100%;

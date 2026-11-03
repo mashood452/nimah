@@ -1,138 +1,313 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { BeforeAfter } from "@/components/media/BeforeAfter";
+import { PhotoSlot } from "@/components/media/PhotoSlot";
 import { Blocks } from "@/components/page/DocBlocks";
 import { FaqList } from "@/components/page/FaqList";
-import { CtaBand, PageHero, SectionHead } from "@/components/page/PageKit";
-import styles from "@/components/page/Page.module.css";
+import { Breadcrumbs, CtaBand, SectionHead } from "@/components/page/PageKit";
+import pageStyles from "@/components/page/Page.module.css";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { IconArrow } from "@/components/navbar/icons";
+import styles from "@/components/lenses/ContactLenses.module.css";
+import { comparisons, faqs, fittingSteps, IMAGE_FOLDER, lensTypes, safetyTips } from "@/lib/contact-lenses";
+import { pageImage } from "@/lib/page-images";
+import { webPageSchema } from "@/lib/schema";
+import { siteConfig } from "@/lib/site";
+
+const TITLE = "Contact Lenses UAE: Daily, Monthly & Toric | Nimah Opticals";
+const DESCRIPTION =
+  "Explore daily, monthly, toric, multifocal and coloured contact lenses in the UAE. Learn about fittings and safe wear, then ask the Nimah Opticals team.";
 
 export const metadata: Metadata = {
-  title: "Contact Lenses",
-  description:
-    "An introduction to contact lenses: the main types, what you need to get started and how to wear them safely, with fitting support from the Nimah team.",
+  title: { absolute: TITLE },
+  description: DESCRIPTION,
   alternates: { canonical: "/contact-lenses" },
 };
 
-const types = [
-  { title: "Daily disposables", text: "A fresh pair every day, with no cleaning or storage. Convenient, and popular for occasional wear and travel." },
-  { title: "Two-weekly and monthly", text: "Worn for a set period, then replaced. They need cleaning and storing each night and suit regular wearers." },
-  { title: "Toric lenses", text: "Designed to correct astigmatism. They are shaped to stay in the right position on the eye." },
-  { title: "Multifocal lenses", text: "Give clear vision at several distances, for people who need help both near and far." },
-  { title: "Coloured lenses", text: "Change or enhance eye colour. Some are made with a prescription, and all need a proper fitting." },
-  { title: "Specialist lenses", text: "For complex prescriptions and some eye conditions. These need a specialist assessment and fitting." },
+const crumbs = [
+  { name: "Home", href: "/" },
+  { name: "Contact lenses", href: "/contact-lenses" },
 ];
 
-const faqs = [
-  {
-    q: "Is a contact lens prescription the same as a glasses prescription?",
-    a: "No. A contact lens prescription includes extra measurements, such as the curve and diameter of the lens, because the lens sits on the eye. You need a contact lens fitting, not just a glasses prescription.",
-  },
-  {
-    q: "Can I sleep in my contact lenses?",
-    a: "Only if your eye care professional has told you that your lenses are designed for it. Sleeping in lenses that are not made for overnight wear raises the risk of eye infections.",
-  },
-  {
-    q: "How often should I replace my lenses?",
-    a: "Follow the schedule for your lens type and the advice of your eye care professional. Wearing lenses beyond their replacement date can cause discomfort and infections.",
-  },
-  {
-    q: "What should I do if my eye is red, painful or blurry?",
-    a: "Take the lens out and see an eye care professional promptly. Do not put the lens back in until you have been checked.",
-  },
+const jumpLinks = [
+  { label: "See the difference", href: "#difference" },
+  { label: "Lens types", href: "#types" },
+  { label: "Your first fitting", href: "#fitting" },
+  { label: "Safe wear", href: "#safety" },
+  { label: "Questions", href: "#faq" },
+];
+
+const related = [
+  { title: "Sunglasses", text: "UV400 and polarized sunglasses to wear over your lenses on bright days.", href: "/sunglasses" },
+  { title: "Blue-cut glasses", text: "A comfortable second pair for long hours at your screen.", href: "/blue-light-glasses" },
+  { title: "Eyeglasses", text: "Refined frames for the days your eyes need a rest from lenses.", href: "/eyeglasses" },
+  { title: "Lens guides", text: "Plain-language guides to lens types, coatings and options.", href: "/lenses" },
 ];
 
 export default function ContactLensesPage() {
+  const { social, contact } = siteConfig;
+  const whatsappHref = social.whatsapp
+    ? `${social.whatsapp}${social.whatsapp.includes("?") ? "&" : "?"}text=${encodeURIComponent(
+        `Hello ${siteConfig.name}, I would like to ask about contact lenses.`,
+      )}`
+    : "";
+
   return (
     <main>
-      <PageHero
-        crumbs={[
-          { name: "Home", href: "/" },
-          { name: "Contact lenses", href: "/contact-lenses" },
-        ]}
-        eyebrow="Contact lenses"
-        title="Contact lenses, fitted with care"
-        intro="A guide to the main types of contact lenses, what you need to get started and how to wear them safely."
+      <JsonLd
+        data={webPageSchema({
+          url: `${siteConfig.url}/contact-lenses`,
+          siteUrl: siteConfig.url,
+          name: TITLE,
+          description: DESCRIPTION,
+          about: "Contact lenses",
+          listName: "Types of contact lenses",
+          items: lensTypes.map((t) => ({ name: t.title, description: t.text })),
+        })}
       />
 
-      <section className={styles.section} aria-labelledby="cl-types">
+      {/* ---------- hero ---------- */}
+      <header className={styles.hero}>
+        <Breadcrumbs crumbs={crumbs} />
+        <div className={styles.heroGrid}>
+          <div className={styles.heroCopy}>
+            <p className={pageStyles.eyebrow}>Contact lenses</p>
+            <h1 className={styles.heroTitle}>Contact lenses in the UAE, fitted with care</h1>
+            <p className={styles.heroIntro}>
+              Daily, monthly, toric, multifocal and coloured contact lenses explained clearly. Learn what to expect from
+              a fitting, how to wear lenses safely, and ask our team about the next steps.
+            </p>
+            <div className={styles.heroActions}>
+              <Link href="/contact" className={pageStyles.btnPrimary}>
+                Ask about contact lenses <IconArrow />
+              </Link>
+              {whatsappHref && (
+                <a href={whatsappHref} className={pageStyles.btnGhost} target="_blank" rel="noopener noreferrer">
+                  WhatsApp us
+                </a>
+              )}
+            </div>
+            <ul className={styles.points}>
+              <li>
+                <strong>Every lens type</strong>
+                Daily, monthly and specialist options
+              </li>
+              <li>
+                <strong>Clear or coloured</strong>
+                Prescription and cosmetic lenses
+              </li>
+              <li>
+                <strong>Friendly guidance</strong>
+                From our team, before and after
+              </li>
+            </ul>
+          </div>
+          <div className={styles.heroPhoto}>
+            <PhotoSlot
+              folder={IMAGE_FOLDER}
+              name="hero"
+              alt="Woman holding a clear contact lens on a clean fingertip beside her face in warm window light"
+              ratio="4 / 5"
+              sizes="(max-width: 900px) 100vw, 40vw"
+              preload
+            />
+          </div>
+        </div>
+      </header>
+
+      <nav className={styles.jump} aria-label="On this page">
+        {jumpLinks.map((l) => (
+          <a key={l.href} href={l.href}>
+            {l.label}
+          </a>
+        ))}
+      </nav>
+
+      {/* ---------- before and after ---------- */}
+      <section id="difference" className={pageStyles.section} aria-labelledby="cl-difference">
+        <SectionHead
+          eyebrow="See the difference"
+          title="Clear vision, with nothing in the way"
+          text="Drag the handle across each picture to compare the view without correction and with contact lenses."
+          id="cl-difference"
+        />
+        <ul className={styles.compare} data-reveal="stagger" suppressHydrationWarning>
+          {comparisons.map((c) => (
+            <li key={c.key}>
+              <figure>
+                <BeforeAfter
+                  before={{ src: pageImage(IMAGE_FOLDER, c.before.image), alt: c.before.alt, label: c.before.label }}
+                  after={{ src: pageImage(IMAGE_FOLDER, c.after.image), alt: c.after.alt, label: c.after.label }}
+                  art={c.art}
+                  blur={c.blur}
+                  ratio="4 / 3"
+                />
+                <figcaption>
+                  <h3>{c.title}</h3>
+                  <p>{c.text}</p>
+                </figcaption>
+              </figure>
+            </li>
+          ))}
+        </ul>
+        <p className={styles.note}>
+          Pictures are for illustration only. Results vary from person to person, and the right lens for you depends on
+          an eye examination and a fitting.
+        </p>
+      </section>
+
+      {/* ---------- lens types ---------- */}
+      <section id="types" className={`${pageStyles.section} ${pageStyles.sectionTint}`} aria-labelledby="cl-types">
         <SectionHead
           eyebrow="The basics"
           title="Types of contact lenses"
           text="The right choice depends on your prescription, your eyes and how you like to live. A fitting will confirm what suits you."
           id="cl-types"
         />
-        <ul className={styles.cards} data-reveal="stagger" suppressHydrationWarning>
-          {types.map((t, i) => (
-            <li key={t.title} className={styles.card}>
-              <span className={styles.cardNum}>{String(i + 1).padStart(2, "0")}</span>
-              <h3 className={styles.cardTitle}>{t.title}</h3>
-              <p className={styles.cardText}>{t.text}</p>
+        <ul className={styles.types} data-reveal="stagger" suppressHydrationWarning>
+          {lensTypes.map((t, i) => (
+            <li key={t.slug} className={styles.type}>
+              <PhotoSlot folder={IMAGE_FOLDER} name={t.image} alt={t.imageAlt} ratio="4 / 3" sizes="(max-width: 700px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+              <div className={styles.typeBody}>
+                <span className={styles.typeNum}>{String(i + 1).padStart(2, "0")}</span>
+                <h3 className={styles.typeTitle}>{t.title}</h3>
+                <p className={styles.typeText}>{t.text}</p>
+                <p className={styles.typeBest}>
+                  <strong>Best for</strong>
+                  {t.bestFor}
+                </p>
+              </div>
             </li>
           ))}
         </ul>
+
+        <div className={styles.tableBlock}>
+          <h3 className={styles.tableTitle}>Contact lens types at a glance</h3>
+          <div className={pageStyles.tableWrap} style={{ margin: 0 }}>
+            <table className={pageStyles.table}>
+              <caption className={styles.srOnly}>Comparison of contact lens types, how often they are replaced and how they are cared for</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Lens type</th>
+                  <th scope="col">Replaced</th>
+                  <th scope="col">Daily care</th>
+                  <th scope="col">Best for</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lensTypes.map((t) => (
+                  <tr key={t.slug}>
+                    <th scope="row" style={{ background: "#ffffff", letterSpacing: 0, textTransform: "none", fontSize: 15, color: "inherit" }}>
+                      {t.title}
+                    </th>
+                    <td>{t.replaced}</td>
+                    <td>{t.care}</td>
+                    <td>{t.bestFor}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
-      <section className={`${styles.section} ${styles.sectionTint}`} aria-labelledby="cl-steps">
-        <SectionHead eyebrow="Getting started" title="What you need" id="cl-steps" />
-        <ol className={styles.steps} data-reveal="stagger" suppressHydrationWarning>
-          <li>
-            <h3 className={styles.cardTitle}>An eye examination</h3>
-            <p className={styles.cardText} style={{ marginTop: 10 }}>Your eye care professional checks your eye health and your vision.</p>
-          </li>
-          <li>
-            <h3 className={styles.cardTitle}>A contact lens fitting</h3>
-            <p className={styles.cardText} style={{ marginTop: 10 }}>The lens size and shape are matched to your eyes, which is different from a glasses prescription.</p>
-          </li>
-          <li>
-            <h3 className={styles.cardTitle}>Learn to handle them</h3>
-            <p className={styles.cardText} style={{ marginTop: 10 }}>Practise putting lenses in and taking them out, and learn how to care for them.</p>
-          </li>
-          <li>
-            <h3 className={styles.cardTitle}>Regular check-ups</h3>
-            <p className={styles.cardText} style={{ marginTop: 10 }}>Keep your appointments so your eyes stay healthy and your prescription stays current.</p>
-          </li>
-        </ol>
+      {/* ---------- fitting ---------- */}
+      <section id="fitting" className={pageStyles.section} aria-labelledby="cl-steps">
+        <div className={styles.fitting}>
+          <div className={styles.fittingPhoto}>
+            <PhotoSlot
+              folder={IMAGE_FOLDER}
+              name="fitting"
+              alt="Eye care professional carrying out a contact lens fitting"
+              ratio="4 / 5"
+              sizes="(max-width: 900px) 100vw, 38vw"
+            />
+          </div>
+          <div>
+            <SectionHead
+              eyebrow="Getting started"
+              title="What to expect at your first fitting"
+              text="Contact lenses are fitted to your eyes, so the first steps matter. Here is how it usually goes."
+              id="cl-steps"
+            />
+            <ol className={pageStyles.steps} style={{ ["--cols" as string]: 2, gap: 40 }} data-reveal="stagger" suppressHydrationWarning>
+              {fittingSteps.map((s) => (
+                <li key={s.title}>
+                  <h3 className={pageStyles.cardTitle}>{s.title}</h3>
+                  <p className={pageStyles.cardText} style={{ marginTop: 10 }}>
+                    {s.text}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
       </section>
 
-      <section className={styles.section} aria-labelledby="cl-safe">
-        <div className={styles.split}>
-          <div className={styles.aside}>
-            <p className={styles.eyebrow}>Wear them safely</p>
-            <h2 id="cl-safe" className={styles.h2}>
+      {/* ---------- safety ---------- */}
+      <section id="safety" className={`${pageStyles.section} ${pageStyles.sectionTint}`} aria-labelledby="cl-safe">
+        <div className={styles.care}>
+          <div>
+            <p className={pageStyles.eyebrow}>Wear them safely</p>
+            <h2 id="cl-safe" className={pageStyles.h2} style={{ marginBottom: 8 }}>
               Good habits keep your eyes healthy
             </h2>
-          </div>
-          <div className={styles.prose}>
-            <Blocks
-              blocks={[
-                {
-                  ul: [
-                    "Wash and dry your hands before touching your lenses.",
-                    "Never use tap water on lenses or a lens case, and never put saliva on them.",
-                    "Use fresh solution every time, and replace your lens case regularly.",
-                    "Follow your replacement schedule and take lenses out before swimming or showering.",
-                    "Take lenses out and call your eye care professional if your eyes are red, sore or blurry.",
-                  ],
-                },
-                {
-                  note: {
-                    title: "Always follow professional advice",
-                    text: "This page is general information. Follow the advice of your eye care professional for your own eyes and lenses.",
+            <div className={pageStyles.prose}>
+              <Blocks
+                blocks={[
+                  { ul: safetyTips },
+                  {
+                    note: {
+                      title: "Always follow professional advice",
+                      text: "This page is general information. Follow the advice of your eye care professional for your own eyes and lenses.",
+                    },
                   },
-                },
-              ]}
+                ]}
+              />
+            </div>
+          </div>
+          <div className={styles.carePhoto}>
+            <PhotoSlot
+              folder={IMAGE_FOLDER}
+              name="care"
+              alt="Clean hands holding a contact lens case with fresh solution"
+              ratio="4 / 5"
+              sizes="(max-width: 900px) 100vw, 38vw"
             />
           </div>
         </div>
       </section>
 
-      <section className={`${styles.section} ${styles.sectionTint}`} aria-labelledby="cl-faq">
+      {/* ---------- related ---------- */}
+      <section className={pageStyles.section} aria-labelledby="cl-related">
+        <SectionHead
+          eyebrow="Complete your eyewear"
+          title="A great pair to go with your lenses"
+          text="Many people wear contact lenses and glasses together. Explore frames for sun, screens and every day."
+          id="cl-related"
+        />
+        <ul className={pageStyles.linkCards} style={{ ["--cols" as string]: 4 }} data-reveal="stagger" suppressHydrationWarning>
+          {related.map((r) => (
+            <li key={r.href}>
+              <Link href={r.href} className={pageStyles.linkCard}>
+                <h3>{r.title}</h3>
+                <p>{r.text}</p>
+                <span>Explore</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* ---------- questions ---------- */}
+      <section id="faq" className={`${pageStyles.section} ${pageStyles.sectionTint}`} aria-labelledby="cl-faq">
         <SectionHead eyebrow="Questions" title="Contact lens questions, answered" id="cl-faq" />
         <FaqList items={faqs} group="contact-lenses" />
       </section>
 
       <CtaBand
-        tone="dark"
         title="Ready to talk about contact lenses?"
-        text="Get in touch and our team will explain the next steps, including fittings and ordering."
+        text={`Get in touch and our team will explain the next steps, including fittings, availability and ordering.${contact.phone ? ` You can also call ${contact.phone}.` : ""}`}
         primary={{ label: "Contact our team", href: "/contact" }}
         secondary={{ label: "Lens guides", href: "/lenses" }}
       />

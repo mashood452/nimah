@@ -9,8 +9,9 @@ export const siteConfig = {
 
   /** Shown in the footer and on the Contact page. Leave a value empty and it is simply not rendered. */
   contact: {
-    email: "",
-    phone: "",
+    email: "info@nimahopticals.com",
+    /** the same number takes calls and WhatsApp messages */
+    phone: "+971 50 212 8613",
     address: "",
     hours: "",
   },
@@ -19,7 +20,7 @@ export const siteConfig = {
     instagram: "",
     facebook: "",
     tiktok: "",
-    whatsapp: "",
+    whatsapp: "https://wa.me/971502128613",
   },
 
   /**

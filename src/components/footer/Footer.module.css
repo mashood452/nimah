@@ -132,6 +132,8 @@
   padding: 6px 0;
   font-size: 15px;
   line-height: 1.55;
+  /* long values, such as an email address, wrap instead of stretching the footer */
+  overflow-wrap: anywhere;
   color: rgba(255, 255, 255, 0.78);
 }
 
@@ -222,6 +224,13 @@
   }
   .logo img {
     height: 80px;
+  }
+}
+
+@media (max-width: 560px) {
+  /* the contact details get the full width of the footer, so the phone number and email fit on one line */
+  .col:has(.contact) {
+    grid-column: 1 / -1;
   }
 }
 

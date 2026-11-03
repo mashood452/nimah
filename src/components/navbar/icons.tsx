@@ -24,6 +24,19 @@ export const IconHeart = (p: SVGProps<SVGSVGElement>) => (
 export const IconBag = (p: SVGProps<SVGSVGElement>) => (
   <svg {...base} {...p}><path d="M5 8h14l-1 12H6L5 8Z" /><path d="M9 8V6.5a3 3 0 0 1 6 0V8" /></svg>
 );
+/** Solid-feeling shopping bag for add-to-bag buttons (the outline IconBag is lighter, for the header). */
+export const IconShoppingBag = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base} strokeWidth={1.9} {...p}>
+    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+    <path d="M3 6h18" />
+    <path d="M16 10a4 4 0 0 1-8 0" />
+  </svg>
+);
+export const IconPhone = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base} strokeWidth={1.7} {...p}>
+    <path d="M21 16.4v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 3.7 2 2 0 0 1 3.1 1.5h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L7.1 9.4a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z" />
+  </svg>
+);
 export const IconMenu = (p: SVGProps<SVGSVGElement>) => (
   <svg {...base} {...p}><path d="M4 8h16M4 16h10" /></svg>
 );

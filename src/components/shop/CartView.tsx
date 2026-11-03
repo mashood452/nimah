@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { formatPrice } from "@/lib/format";
+import { Price } from "../ui/Price";
 import { mediaUrl } from "@/lib/media";
 import { useProducts } from "./ProductCatalogProvider";
 import { useCart } from "@/lib/shop-store";
@@ -106,7 +107,7 @@ export function CartView() {
               </div>
             </div>
 
-            <p className={styles.linePrice}>{formatPrice(p.price * line.qty)}</p>
+            <p className={styles.linePrice}><Price amount={p.price * line.qty} /></p>
           </li>
         ))}
       </ul>
@@ -117,14 +118,14 @@ export function CartView() {
           <span>
             Items <small>({count})</small>
           </span>
-          <strong>{formatPrice(subtotal)}</strong>
+          <strong><Price amount={subtotal} /></strong>
         </div>
         <div className={styles.summaryRow}>
           <span>Delivery</span>
           <strong>Confirmed with your order</strong>
         </div>
         <p className={styles.summaryTotal}>
-          Subtotal <strong>{formatPrice(subtotal)}</strong>
+          Subtotal <strong><Price amount={subtotal} /></strong>
         </p>
         <p className={styles.summaryNote}>
           Online checkout is coming soon. Send us your bag and our team will complete your order with you, including

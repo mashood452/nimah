@@ -34,7 +34,7 @@ export function Hero() {
           </h1>
           <p className={`${styles.lede} ${styles.reveal}`} style={{ "--d": "0.4s" } as React.CSSProperties}>
             Polarized UV400 sunglasses, blue-light glasses and refined optical frames, chosen to
-            protect your eyes and finish your look.
+            protect your eyes and finish your look. Delivered across the UAE.
           </p>
           <div className={`${styles.actions} ${styles.reveal}`} style={{ "--d": "0.55s" } as React.CSSProperties}>
             <Link href="/sunglasses" className={`${styles.btn} ${styles.btnPrimary}`}>

@@ -1,0 +1,28 @@
+.price {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.28em;
+  white-space: nowrap;
+}
+/* sits on the text baseline and matches the height of the capital letters; always the brand brown */
+.symbol {
+  flex: none;
+  width: auto;
+  height: 0.72em;
+  color: var(--nm-accent);
+}
+.amount {
+  font-variant-numeric: tabular-nums;
+}
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

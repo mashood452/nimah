@@ -4,8 +4,8 @@ import { useState, type FormEvent, type ReactNode, type RefObject } from "react"
 import { Recaptcha, useRecaptcha } from "./Recaptcha";
 import styles from "./Account.module.css";
 
-export function CaptchaSearchForm({ className, buttonClassName, placeholder = "Search eyewear", defaultValue = "", inputRef, icon }: {
-  className?: string; buttonClassName?: string; placeholder?: string; defaultValue?: string; inputRef?: RefObject<HTMLInputElement | null>; icon?: ReactNode;
+export function CaptchaSearchForm({ className, formClassName, buttonClassName, placeholder = "Search eyewear", defaultValue = "", inputRef, icon }: {
+  className?: string; formClassName?: string; buttonClassName?: string; placeholder?: string; defaultValue?: string; inputRef?: RefObject<HTMLInputElement | null>; icon?: ReactNode;
 }) {
   const { ready, executeCaptcha } = useRecaptcha();
   const [pending, setPending] = useState(false);
@@ -24,7 +24,9 @@ export function CaptchaSearchForm({ className, buttonClassName, placeholder = "S
     } catch { setMessage("The security check could not complete. Please try again."); }
     finally { setPending(false); }
   }
-  return <form onSubmit={submit} role="search" style={{ display: "grid", gap: 14, marginBottom: 24 }}>
+  // minmax(0, 1fr) keeps the single column no wider than the form, so the long reCAPTCHA notice wraps instead of
+  // stretching the column (and whatever contains the form) beyond its container.
+  return <form onSubmit={submit} role="search" className={formClassName} style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 14, marginBottom: 24 }}>
     <div className={className} style={{ marginBottom: 0 }}>{icon}<input ref={inputRef} type="search" name="q" defaultValue={defaultValue} placeholder={placeholder} aria-label="Search products" autoComplete="off" maxLength={200} required /><button type="submit" className={buttonClassName ?? styles.secondary} disabled={!ready || pending}>{pending ? "Searching..." : "Search"}</button></div>
     <Recaptcha />
     {message && <p className={styles.fieldError} role="alert">{message}</p>}

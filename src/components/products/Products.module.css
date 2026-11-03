@@ -123,10 +123,6 @@
   height: 100%;
   color: var(--nm-text);
 }
-.link:focus-visible {
-  outline: 2px solid var(--nm-accent);
-  outline-offset: -2px;
-}
 
 .media {
   position: relative;
@@ -204,7 +200,7 @@
   transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .card:hover .quick,
-.link:focus-visible .quick {
+.card:has(.name:focus-visible) .quick {
   transform: none;
 }
 
@@ -221,11 +217,33 @@
   text-transform: uppercase;
   color: var(--nm-muted);
 }
+.nameRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
 .name {
+  min-width: 0;
   font-size: 19px;
   font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.02em;
+  color: inherit;
+}
+/* stretches the name's link over the whole card; the heart and bag buttons sit above it */
+.name::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.name:focus-visible {
+  outline: none;
+}
+.name:focus-visible::after {
+  outline: 2px solid var(--nm-accent);
+  outline-offset: -2px;
 }
 .sub {
   margin-top: 6px;
@@ -257,6 +275,41 @@
   height: 13px;
   border-radius: 50%;
   box-shadow: 0 0 0 1px #ffffff, 0 0 0 2px rgba(60, 37, 42, 0.2);
+}
+
+/* quick add: round bag button on the name row, lifted a little above it */
+.bag {
+  position: relative;
+  z-index: 2;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin: -12px 0 0;
+  padding: 0;
+  color: #ffffff;
+  background: var(--nm-accent);
+  border: 1.5px solid var(--nm-accent);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+.bag svg {
+  width: 18px;
+  height: 18px;
+}
+/* a plain colour swap on hover: nothing grows, moves or glows */
+.bag:hover {
+  color: var(--nm-accent);
+  background: #ffffff;
+}
+.bag:active {
+  background: var(--nm-surface);
+}
+.bag:focus-visible {
+  outline: 2px solid var(--nm-accent);
+  outline-offset: 3px;
 }
 
 /* wishlist */
@@ -369,6 +422,15 @@
   }
   .name {
     font-size: 16px;
+  }
+  .bag {
+    width: 34px;
+    height: 34px;
+    margin-top: -8px;
+  }
+  .bag svg {
+    width: 16px;
+    height: 16px;
   }
   .sub {
     font-size: 12.5px;

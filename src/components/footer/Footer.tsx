@@ -83,6 +83,13 @@ export function Footer() {
                     <a href={`tel:${contact.phone.replace(/\s+/g, "")}`}>{contact.phone}</a>
                   </li>
                 )}
+                {social.whatsapp && (
+                  <li>
+                    <a href={social.whatsapp} target="_blank" rel="noopener noreferrer">
+                      WhatsApp us
+                    </a>
+                  </li>
+                )}
                 {contact.email && (
                   <li>
                     <a href={`mailto:${contact.email}`}>{contact.email}</a>

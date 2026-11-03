@@ -4,6 +4,7 @@ import { LogoutButton } from "@/components/account/LogoutButton";
 import { EmailPreferences } from "@/components/account/EmailPreferences";
 import { requireCustomer } from "@/lib/auth/session";
 import { queryRows } from "@/lib/db";
+import { Price } from "@/components/ui/Price";
 import styles from "@/components/account/Account.module.css";
 
 export const metadata: Metadata = {
@@ -33,7 +34,7 @@ export default async function AccountPage() {
       </section>
       <section className={styles.panel} aria-labelledby="orders-title"><h2 id="orders-title">Recent orders</h2>
         {orders.length ? <table className={styles.orders}><caption className={styles.emptyNotice}>Your ten most recent orders</caption><thead><tr><th scope="col">Order</th><th scope="col">Date</th><th scope="col">Status</th><th scope="col">Total</th></tr></thead><tbody>
-          {orders.map((order) => <tr key={order.order_number}><td>{order.order_number}</td><td>{date(String(order.placed_at))}</td><td>{String(order.status).replace(/^./, (letter) => letter.toUpperCase())}</td><td>{new Intl.NumberFormat("en-AE", { style: "currency", currency: String(order.currency) }).format(Number(order.grand_total))}</td></tr>)}
+          {orders.map((order) => <tr key={order.order_number}><td>{order.order_number}</td><td>{date(String(order.placed_at))}</td><td>{String(order.status).replace(/^./, (letter) => letter.toUpperCase())}</td><td>{String(order.currency) === "AED" ? <Price amount={Number(order.grand_total)} decimals={2} /> : new Intl.NumberFormat("en-AE", { style: "currency", currency: String(order.currency) }).format(Number(order.grand_total))}</td></tr>)}
         </tbody></table> : <div className={styles.emptyOrders}><strong>Your next favourite pair is waiting.</strong><p>You have no orders linked to this account yet. Explore our collection, or contact our team for help with an existing order.</p><Link className={styles.primary} href="/shop">Explore eyewear <span aria-hidden="true">↗</span></Link></div>}
       </section>
     </div>

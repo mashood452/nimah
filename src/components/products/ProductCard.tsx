@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { formatPrice } from "@/lib/format";
 import { mediaUrl } from "@/lib/media";
-import { useWishlist } from "@/lib/shop-store";
-import { IconArrow, IconHeart } from "../navbar/icons";
+import { colorName } from "@/lib/product-info";
+import { useCart, useCartDrawer, useWishlist } from "@/lib/shop-store";
+import { IconArrow, IconHeart, IconShoppingBag } from "../navbar/icons";
+import { Price } from "../ui/Price";
 import { ProductPlaceholder } from "./ProductPlaceholder";
 import type { Product } from "./products-data";
 import styles from "./Products.module.css";
@@ -14,10 +15,18 @@ import styles from "./Products.module.css";
 export function ProductCard({ product: p }: { product: Product }) {
   const { has, toggle } = useWishlist();
   const saved = has(p.slug);
+  const { add } = useCart();
+  const { show: showBag } = useCartDrawer();
+
+  /** Adds the first colour, as shown by the first swatch, and opens the bag drawer. */
+  const onAdd = (e: React.MouseEvent<HTMLButtonElement>) => {
+    add(p.slug, colorName(p.swatches[0]), 1);
+    showBag(e.currentTarget);
+  };
 
   return (
     <article className={styles.card}>
-      <Link href={`/products/${p.slug}`} className={styles.link}>
+      <div className={styles.link}>
         <span className={styles.media}>
           {p.image ? (
             <Image
@@ -45,10 +54,18 @@ export function ProductCard({ product: p }: { product: Product }) {
 
         <span className={styles.info}>
           <span className={styles.cat}>{p.categoryLabel ?? p.category}</span>
-          <span className={styles.name}>{p.name}</span>
+          <span className={styles.nameRow}>
+            {/* the name is the card's link, stretched over the whole card so a click anywhere opens the product */}
+            <Link href={`/products/${p.slug}`} className={styles.name}>
+              {p.name}
+            </Link>
+            <button type="button" className={styles.bag} aria-label={`Add ${p.name} to bag`} onClick={onAdd}>
+              <IconShoppingBag />
+            </button>
+          </span>
           <span className={styles.sub}>{p.subtitle}</span>
           <span className={styles.row}>
-            <span className={styles.price}>{formatPrice(p.price)}</span>
+            <span className={styles.price}><Price amount={p.price} /></span>
             <span className={styles.swatches} aria-hidden="true">
               {p.swatches.slice(0, 3).map((c) => (
                 <i key={c} style={{ background: c }} />
@@ -56,7 +73,7 @@ export function ProductCard({ product: p }: { product: Product }) {
             </span>
           </span>
         </span>
-      </Link>
+      </div>
 
       <button
         type="button"

@@ -3,11 +3,12 @@ import Link from "next/link";
 import { brands, type Brand } from "./brands-data";
 import styles from "./Brands.module.css";
 
-function BrandMark({ brand, index }: { brand: Brand; index: number }) {
+function BrandMark({ brand, index, decorative = false }: { brand: Brand; index: number; decorative?: boolean }) {
   const inner = brand.logo ? (
     <Image
       src={brand.logo}
-      alt={brand.name}
+      // the repeated copy that makes the loop seamless carries no alt text, so each brand is described once
+      alt={decorative ? "" : `${brand.name} logo`}
       width={brand.width ?? 160}
       height={brand.height ?? 48}
       className={styles.logo}
@@ -49,7 +50,7 @@ export function Brands() {
           {/* second copy makes the loop seamless; hidden from assistive tech and crawlers of the list */}
           {brands.map((b, i) => (
             <li key={`${b.name}-copy`} aria-hidden="true" className={styles.copy}>
-              <BrandMark brand={{ ...b, href: undefined }} index={i} />
+              <BrandMark brand={{ ...b, href: undefined }} index={i} decorative />
             </li>
           ))}
         </ul>

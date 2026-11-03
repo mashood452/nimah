@@ -5,11 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef } from "react";
 import { useProducts } from "./ProductCatalogProvider";
-import { formatPrice } from "@/lib/format";
 import { mediaUrl } from "@/lib/media";
 import { getDrawerTrigger, useCart, useCartDrawer } from "@/lib/shop-store";
 import { IconArrow, IconClose } from "../navbar/icons";
 import { ProductPlaceholder } from "../products/ProductPlaceholder";
+import { Price } from "../ui/Price";
 import styles from "./CartDrawer.module.css";
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -91,12 +91,13 @@ export function CartDrawer() {
         onKeyDown={onKeyDown}
       >
         <header className={styles.head}>
-          <h2 id="bag-drawer-title" className={styles.title}>
+          {/* not a heading: the drawer sits before the page's h1 in the markup, so it must not outrank it */}
+          <p id="bag-drawer-title" className={styles.title}>
             Your bag
             <span>
               {count} {count === 1 ? "item" : "items"}
             </span>
-          </h2>
+          </p>
           <button ref={closeRef} type="button" className={styles.close} aria-label="Close bag" onClick={hide}>
             <IconClose />
           </button>
@@ -113,7 +114,7 @@ export function CartDrawer() {
                 <path d="M104 36 Q120 28 136 36 M106 44 Q120 38 134 44" />
                 <path d="M26 38 L6 34 M214 38 L234 34" />
               </svg>
-              <h3>Your bag is empty</h3>
+              <p className={styles.emptyTitle}>Your bag is empty</p>
               <p>Add a pair you love and it will wait for you here.</p>
               <Link href="/sunglasses" className={styles.ghost} style={{ marginTop: 12 }}>
                 Shop sunglasses
@@ -131,7 +132,7 @@ export function CartDrawer() {
                       <Link href={`/products/${p.slug}`} className={styles.name}>
                         {p.name}
                       </Link>
-                      <span className={styles.price}>{formatPrice(p.price * line.qty)}</span>
+                      <span className={styles.price}><Price amount={p.price * line.qty} /></span>
                     </div>
                     <p className={styles.meta}>{p.subtitle}</p>
                     <p className={styles.meta}>Colour: {line.color}</p>
@@ -159,7 +160,7 @@ export function CartDrawer() {
         {rows.length > 0 && (
           <footer className={styles.foot}>
             <p className={styles.subtotal}>
-              Subtotal <strong>{formatPrice(subtotal)}</strong>
+              Subtotal <strong><Price amount={subtotal} /></strong>
             </p>
             <p className={styles.note}>Delivery and payment are confirmed with our team when you place your order.</p>
             <Link href="/contact" className={styles.primary}>

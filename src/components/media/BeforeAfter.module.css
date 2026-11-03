@@ -1,0 +1,154 @@
+.root {
+  --pos: 50%;
+  --blur: 12px;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: var(--nm-surface);
+  border: 1px solid var(--nm-line);
+  cursor: ew-resize;
+  user-select: none;
+  -webkit-user-select: none;
+  /* a finger can still scroll the page up and down; sideways movement drives the slider */
+  touch-action: pan-y;
+}
+.after,
+.before {
+  position: absolute;
+  inset: 0;
+}
+.photo {
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/*
+ * The "before" side is blurred, and its right edge is feathered (a soft gradient mask, not a hard line), so the
+ * picture melts from blurry to sharp as the handle moves.
+ */
+.before {
+  -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(var(--pos) - 6%), transparent calc(var(--pos) + 6%));
+  mask-image: linear-gradient(90deg, #000 0, #000 calc(var(--pos) - 6%), transparent calc(var(--pos) + 6%));
+}
+.beforeInner {
+  position: absolute;
+  /* oversized so the blur does not fade out at the edges of the frame */
+  inset: -4%;
+  filter: blur(var(--blur)) saturate(0.85);
+}
+.beforeInner > * {
+  position: absolute;
+  inset: 0;
+}
+
+/* ---------- labels ---------- */
+.tag {
+  position: absolute;
+  top: 16px;
+  z-index: 2;
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--nm-accent);
+  background: rgba(255, 255, 255, 0.92);
+  pointer-events: none;
+}
+.tagBefore {
+  left: 16px;
+}
+.tagAfter {
+  right: 16px;
+  color: #ffffff;
+  background: var(--nm-accent);
+}
+
+/* ---------- handle ---------- */
+.handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--pos);
+  z-index: 3;
+  width: 0;
+  outline: none;
+}
+.handle::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -1px;
+  width: 2px;
+  background: #ffffff;
+  box-shadow: 0 0 14px rgba(60, 37, 42, 0.35);
+}
+.grip {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  color: var(--nm-accent);
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 8px 26px -6px rgba(60, 37, 42, 0.5);
+  transform: translate(-50%, -50%);
+  transition: transform 0.25s ease;
+}
+.root:hover .grip {
+  transform: translate(-50%, -50%) scale(1.06);
+}
+.handle:focus-visible .grip {
+  outline: 2px solid var(--nm-accent);
+  outline-offset: 3px;
+}
+
+/* ---------- hint ---------- */
+.hint {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  z-index: 2;
+  padding: 8px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: rgba(60, 37, 42, 0.78);
+  transform: translateX(-50%);
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.hint[data-hidden="true"] {
+  opacity: 0;
+}
+
+@media (max-width: 560px) {
+  .tag {
+    top: 10px;
+    padding: 6px 10px;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+  }
+  .tagBefore {
+    left: 10px;
+  }
+  .tagAfter {
+    right: 10px;
+  }
+  .grip {
+    width: 46px;
+    height: 46px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .grip,
+  .hint {
+    transition: none;
+  }
+}
