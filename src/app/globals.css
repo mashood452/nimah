@@ -1,40 +1,51 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --nm-bg: #ffffff;
+  --nm-surface: #f7f2f3;
+  --nm-line: rgba(60, 37, 42, 0.14);
+  --nm-accent: #3c252a;
+  --nm-accent-2: #5a3a43;
+  --nm-champagne: #e3c4a4;
+  --nm-text: #1f1a1b;
+  --nm-muted: #6e6466;
+  color-scheme: light;
+
+  /* page width: content never exceeds --container, edges keep --pad */
+  --container: 1680px;
+  --pad: 48px;
+  --gutter: max(var(--pad), calc((100cqw - var(--container)) / 2 + var(--pad)));
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 html {
-  height: 100%;
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 140px; /* anchor links land below the sticky header */
 }
 
-html,
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  /* clip (not hidden) so a stray element can never cause sideways scroll, and sticky still works */
+  overflow-x: clip;
+  min-height: 100vh;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  color: var(--nm-text);
+  background: var(--nm-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* cqw (not vw) so the gutter ignores the scrollbar and matches the navbar exactly */
+main {
+  container-type: inline-size;
 }
 
 a {
@@ -42,8 +53,44 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+img {
+  display: block;
+  max-width: 100%;
+}
+
+@media (max-width: 900px) {
+  :root {
+    --pad: 20px;
+  }
+}
+
+/* ---------- scroll reveal (see components/motion/RevealOnScroll) ---------- */
+[data-reveal],
+[data-reveal='stagger'] > * {
+  transition: opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+[data-reveal='stagger'] > * {
+  transition-delay: calc(var(--stagger, 0) * 90ms);
+}
+[data-reveal='stagger'] > :nth-child(2) { --stagger: 1; }
+[data-reveal='stagger'] > :nth-child(3) { --stagger: 2; }
+[data-reveal='stagger'] > :nth-child(4) { --stagger: 3; }
+[data-reveal='stagger'] > :nth-child(5) { --stagger: 4; }
+[data-reveal='stagger'] > :nth-child(6) { --stagger: 5; }
+[data-reveal='stagger'] > :nth-child(n + 7) { --stagger: 6; }
+
+/* hidden only once the script is running, so the page is complete without JavaScript */
+.reveal-ready [data-reveal]:not([data-visible]):not([data-reveal='stagger']),
+.reveal-ready [data-reveal='stagger']:not([data-visible]) > * {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal],
+  [data-reveal='stagger'] > * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }

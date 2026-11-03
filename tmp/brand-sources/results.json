@@ -1,0 +1,90 @@
+[
+  {
+    "status": "fulfilled",
+    "value": {
+      "name": "Ray-Ban",
+      "slug": "ray-ban",
+      "url": "https://visionsourceshowcase.luxottica.com/wp-content/uploads/ray-ban-logo-1200-updated-1024x695.jpg",
+      "width": 215,
+      "height": 112,
+      "size": 12876
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "name": "Oakley",
+      "slug": "oakley",
+      "url": "https://visionsourceshowcase.luxottica.com/wp-content/uploads/oakley-logo.png",
+      "width": 309,
+      "height": 112,
+      "size": 13455
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "name": "Gucci",
+      "slug": "gucci",
+      "url": "https://www.keringeyewear.com/dam/jcr%3A7491c479-8beb-4d45-89d6-d6868c4d935c/Gucci_Logo_960x200px%202.png",
+      "width": 360,
+      "height": 75,
+      "size": 2888
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "name": "Prada",
+      "slug": "prada",
+      "url": "https://visionsourceshowcase.luxottica.com/wp-content/uploads/Prada_Logo-1024x695.jpg",
+      "width": 360,
+      "height": 83,
+      "size": 13999
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "name": "Versace",
+      "slug": "versace",
+      "url": "https://visionsourceshowcase.luxottica.com/wp-content/uploads/Versace_Logo-1024x695.jpg",
+      "width": 218,
+      "height": 112,
+      "size": 15342
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "name": "Burberry",
+      "slug": "burberry",
+      "url": "https://visionsourceshowcase.luxottica.com/wp-content/uploads/New-Burberry-Logo.png",
+      "width": 360,
+      "height": 58,
+      "size": 10287
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "name": "Dolce & Gabbana",
+      "slug": "dolce-gabbana",
+      "url": "https://visionsourceshowcase.luxottica.com/wp-content/uploads/DolceandGabbana_Logo-1024x695.jpg",
+      "width": 360,
+      "height": 37,
+      "size": 14384
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "name": "Vogue Eyewear",
+      "slug": "vogue-eyewear",
+      "url": "https://visionsourceshowcase.luxottica.com/wp-content/uploads/Vogue_Logo-1024x695.jpg",
+      "width": 263,
+      "height": 112,
+      "size": 14256
+    }
+  }
+]

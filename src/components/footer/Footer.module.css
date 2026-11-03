@@ -1,0 +1,234 @@
+.footer {
+  color: rgba(255, 255, 255, 0.72);
+  background: var(--nm-accent);
+}
+
+/* ---------- call to action ---------- */
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 88px var(--gutter);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+.ctaKicker {
+  margin: 0 0 18px;
+  font-size: 11.5px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--nm-champagne);
+}
+.ctaTitle {
+  max-width: 1000px;
+  margin: 0;
+  font-size: clamp(32px, 4.4vw, 64px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: #ffffff;
+}
+.ctaBtn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 14px;
+  height: 60px;
+  padding: 0 38px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--nm-accent);
+  background: #ffffff;
+  transition: background-color 0.3s;
+}
+.ctaBtn svg {
+  transition: transform 0.3s;
+}
+.ctaBtn:hover {
+  background: var(--nm-champagne);
+}
+.ctaBtn:hover svg {
+  transform: translateX(6px);
+}
+
+/* ---------- main ---------- */
+.main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 72px;
+  padding: 80px var(--gutter) 72px;
+}
+.logo {
+  display: inline-block;
+}
+.logo img {
+  display: block;
+  width: auto;
+  height: 96px;
+}
+.blurb {
+  max-width: 340px;
+  margin: 28px 0 0;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.socials {
+  display: flex;
+  gap: 10px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.socials a {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  transition: color 0.3s, background-color 0.3s, border-color 0.3s;
+}
+.socials a:hover {
+  color: var(--nm-accent);
+  background: var(--nm-champagne);
+  border-color: var(--nm-champagne);
+}
+
+.cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 40px;
+}
+.col ul {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.colTitle {
+  margin: 0 0 22px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--nm-champagne);
+}
+.col a {
+  display: inline-block;
+  padding: 6px 0;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.78);
+  transition: color 0.25s, transform 0.3s;
+}
+.col a:hover {
+  color: #ffffff;
+  transform: translateX(5px);
+}
+.contact li {
+  padding: 6px 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* ---------- bottom bar ---------- */
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 26px var(--gutter);
+  font-size: 13px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+.copy {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.6);
+}
+.legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 32px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.legal a {
+  color: rgba(255, 255, 255, 0.72);
+  transition: color 0.25s;
+}
+.legal a:hover {
+  color: #ffffff;
+}
+.top {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #ffffff !important;
+}
+.top svg {
+  transform: rotate(-90deg);
+  color: var(--nm-champagne);
+  transition: transform 0.3s;
+}
+.top:hover svg {
+  transform: rotate(-90deg) translateX(5px);
+}
+
+.footer a:focus-visible {
+  outline: 2px solid var(--nm-champagne);
+  outline-offset: 3px;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 1100px) {
+  .main {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 56px;
+  }
+}
+
+@media (max-width: 900px) {
+  .cta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 32px;
+    padding: 64px var(--pad);
+  }
+  .ctaBtn {
+    width: 100%;
+    justify-content: center;
+  }
+  .main {
+    padding: 56px var(--pad);
+  }
+  .cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px 24px;
+  }
+  .bar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px var(--pad) 32px;
+  }
+  .logo img {
+    height: 80px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .col a,
+  .ctaBtn svg,
+  .top svg {
+    transition: none;
+  }
+}
