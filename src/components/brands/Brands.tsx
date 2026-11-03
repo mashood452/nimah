@@ -3,30 +3,8 @@ import Link from "next/link";
 import { brands, type Brand } from "./brands-data";
 import styles from "./Brands.module.css";
 
-// Optical sizing: every logo gets about the same visual weight (area), whatever its shape.
-// A very wide wordmark ends up wide and short, a stacked emblem narrow and tall, and both look equally prominent.
-const AREA = 6500; // css px squared
-const MAX_W = 180;
-const MAX_H = 52;
-
-function opticalSize(naturalW: number, naturalH: number) {
-  const aspect = naturalW / naturalH;
-  let h = Math.sqrt(AREA / aspect);
-  let w = aspect * h;
-  if (w > MAX_W) {
-    w = MAX_W;
-    h = w / aspect;
-  }
-  if (h > MAX_H) {
-    h = MAX_H;
-    w = h * aspect;
-  }
-  return { w: Math.round(w), h: Math.round(h) };
-}
-
 function BrandMark({ brand, index }: { brand: Brand; index: number }) {
-  const size = brand.logo ? opticalSize(brand.width ?? 160, brand.height ?? 48) : null;
-  const inner = brand.logo && size ? (
+  const inner = brand.logo ? (
     <Image
       src={brand.logo}
       alt={brand.name}
@@ -34,8 +12,8 @@ function BrandMark({ brand, index }: { brand: Brand; index: number }) {
       height={brand.height ?? 48}
       className={styles.logo}
       style={{
-        width: `calc(${size.w}px * var(--logo-scale, 1))`,
-        height: `calc(${size.h}px * var(--logo-scale, 1))`,
+        width: `calc(${brand.displayWidth ?? 144}px * var(--logo-scale, 1))`,
+        height: "auto",
       }}
     />
   ) : (

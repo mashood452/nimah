@@ -1,4 +1,5 @@
 .section {
+  --brand-slot: 208px;
   display: grid;
   grid-template-columns: 200px minmax(0, 1fr);
   align-items: center;
@@ -23,8 +24,8 @@
 .viewport {
   min-width: 0;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 16px, #000 calc(100% - 16px), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 16px, #000 calc(100% - 16px), transparent);
 }
 .track {
   display: flex;
@@ -35,7 +36,8 @@
   list-style: none;
   animation: glide 44s linear infinite;
 }
-.viewport:hover .track {
+.viewport:hover .track,
+.viewport:focus-within .track {
   animation-play-state: paused;
 }
 @keyframes glide {
@@ -44,24 +46,27 @@
   }
 }
 .track li {
-  flex: none;
+  flex: 0 0 var(--brand-slot);
+  width: var(--brand-slot);
 }
 
-/* width follows the logo, so the gap between any two logos is the same */
+/* Equal slots keep logos on the same centerline with consistent spacing. */
 .item {
   display: grid;
   place-items: center;
-  height: 64px;
-  padding: 0 30px;
+  width: 100%;
+  height: 76px;
+  padding: 0 12px;
 }
 
 /* real logos: quiet grey until hovered */
-/* width and height are set per logo in Brands.tsx (optical sizing) */
+/* Artwork-specific widths balance visual weight while preserving proportions. */
 .logo {
   display: block;
   object-fit: contain;
-  filter: grayscale(1);
-  opacity: 0.7;
+  max-width: 100%;
+  filter: grayscale(1) brightness(0);
+  opacity: 0.74;
   transition: filter 0.4s, opacity 0.4s;
 }
 .item:hover .logo {
@@ -94,16 +99,17 @@
 
 @media (max-width: 900px) {
   .section {
+    --brand-slot: 176px;
     grid-template-columns: minmax(0, 1fr);
     gap: 22px;
     padding: 36px var(--pad);
   }
   .track {
-    --logo-scale: 0.8;
+    --logo-scale: 0.82;
   }
   .item {
-    height: 56px;
-    padding: 0 22px;
+    height: 64px;
+    padding: 0 10px;
   }
 }
 
@@ -114,9 +120,13 @@
     mask-image: none;
   }
   .track {
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--brand-slot)), 1fr));
     width: auto;
     animation: none;
+  }
+  .track li {
+    width: 100%;
   }
   .copy {
     display: none;
