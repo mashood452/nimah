@@ -20,7 +20,7 @@ export async function signup(request: Request) {
     if (!input.valid) return authJson({ message: "Please check the highlighted fields.", errors: input.errors }, 422);
     const proof = await emailProof();
     if (!proof || !await hasEmailProof(input.email, proof)) return authJson({ message: "Verify your email address before creating an account.", requiresVerification: true }, 403);
-    await verifyCaptcha(body.captchaToken);
+    await verifyCaptcha(body.captchaToken, "signup");
     const retries = await Promise.all([
       consumeLimit(`signup-address:${requestAddress(request)}`, 10, 3600),
       consumeLimit(`signup-email:${input.email}`, 5, 3600),
@@ -59,7 +59,7 @@ export async function login(request: Request) {
     const body = await readAuthBody(request);
     const input = validateAuthInput(body, "login");
     if (!input.valid) return authJson({ message: "Please check the highlighted fields.", errors: input.errors }, 422);
-    await verifyCaptcha(body.captchaToken);
+    await verifyCaptcha(body.captchaToken, "login");
     const retries = await Promise.all([
       consumeLimit(`login-email:${input.email}`, 5, 900),
       consumeLimit(`login-address:${requestAddress(request)}`, 30, 900),

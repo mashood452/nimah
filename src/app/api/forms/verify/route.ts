@@ -5,9 +5,10 @@ import { consumeLimit, requestAddress } from "@/lib/auth/rate-limit";
 export async function POST(request: Request) {
   try {
     const body = await readAuthBody(request);
+    if (body.purpose !== "search" && body.purpose !== "contact") return authJson({ message: "Use a supported form to continue." }, 422);
     const retry = await consumeLimit(`public-form:${requestAddress(request)}`, 60, 900);
     if (retry) return authJson({ message: "Please wait a moment before trying again." }, 429);
-    await verifyCaptcha(body.captchaToken);
+    await verifyCaptcha(body.captchaToken, body.purpose);
     return authJson({ verified: true });
   } catch (error) { return authFailure(error); }
 }

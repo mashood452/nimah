@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     if (!accountId) return authJson({ message: "This preference link is invalid." }, 400);
     if (request.headers.get("content-type")?.includes("application/json")) {
       const body = await readAuthBody(request);
-      await verifyCaptcha(body.captchaToken);
+      await verifyCaptcha(body.captchaToken, "unsubscribe");
     } else {
       // RFC 8058 mail-provider one-click unsubscribe is authenticated by its signed, opt-out-only token.
       if (Number(request.headers.get("content-length") ?? 0) > 256) return authJson({ message: "Invalid request." }, 400);

@@ -29,7 +29,7 @@ All authentication writes require POST, a same-origin Origin header and an appli
 
 Login limits are five attempts per normalized email per 15 minutes and 30 per address per 15 minutes. Signup limits are five attempts per email and ten per address per hour. Counters live in MySQL so they work across processes. A successful login resets the email's failed-attempt counter. Missing users and incorrect passwords receive the same credential error and both perform a scrypt calculation. Expired sessions and old rate-limit buckets are pruned during account activity.
 
-Terms acceptance is recorded with the current version on signup. New accounts require verified mailbox ownership and Google reCAPTCHA v2 Checkbox. Existing unverified customers must verify their email and then enter their password. Password-reset emails are not implemented. See [email automation](EMAIL_AUTOMATION.md) for configuration and delivery behavior.
+Terms acceptance is recorded with the current version on signup. New accounts require verified mailbox ownership and Google reCAPTCHA v3. Every protected submission generates a fresh action-specific token; the backend checks hostname, age, action and a score of at least 0.5. Existing unverified customers must verify their email and then enter their password. Password-reset emails are not implemented. See [email automation](EMAIL_AUTOMATION.md) for configuration and delivery behavior.
 
 ## Verification
 

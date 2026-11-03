@@ -13,6 +13,7 @@ import { getProducts } from "@/lib/catalog";
 import { getCustomer } from "@/lib/auth/session";
 import { CartSync } from "@/components/shop/CartSync";
 import { startCartReminderWorker } from "@/lib/email/worker";
+import { RecaptchaProvider } from "@/components/account/Recaptcha";
 
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 
@@ -45,6 +46,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={manrope.variable}>
       <body>
+        <RecaptchaProvider>
         <ProductCatalogProvider products={products}>
           <CartSync accountId={customer?.id ?? null} />
           <Navbar accountName={customer?.name} />
@@ -54,6 +56,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <RevealOnScroll />
           <GoogleAnalytics />
         </ProductCatalogProvider>
+        </RecaptchaProvider>
       </body>
     </html>
   );

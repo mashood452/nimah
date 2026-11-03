@@ -28,8 +28,9 @@ function report(message: string) { console.log(`OK ${message}`); }
 const cookieValue = (response: Response) => response.headers.get("set-cookie")?.split(";")[0] ?? "";
 
 async function post(path: string, body: object, cookie = "", origin = base.origin) {
+  const action = path.startsWith("/api/auth/") ? path.slice("/api/auth/".length).replaceAll("/", "_") : (body as { purpose?: string }).purpose ?? "search";
   return fetch(new URL(path, base), { method: "POST", redirect: "manual",
-    headers: { "Content-Type": "application/json", Origin: origin, "X-Real-IP": address, ...(cookie ? { Cookie: cookie } : {}) }, body: JSON.stringify({ captchaToken: `qa-captcha-${randomUUID()}`, ...body }) });
+    headers: { "Content-Type": "application/json", Origin: origin, "X-Real-IP": address, ...(cookie ? { Cookie: cookie } : {}) }, body: JSON.stringify({ captchaToken: `qa-captcha-${action}-${randomUUID()}`, ...body }) });
 }
 
 async function verifyAddress(owner: string) {
@@ -73,6 +74,7 @@ async function run() {
   report("server validation and cross-site signup rejection");
 
   assert.equal((await post("/api/auth/login", { email, password, captchaToken: null })).status, 422);
+  assert.equal((await post("/api/auth/login", { email, password, captchaToken: `qa-captcha-search-${randomUUID()}` })).status, 422);
   assert.equal((await post("/api/auth/signup", payload)).status, 403);
   const proof = await verifyAddress(email);
   response = await post("/api/auth/signup", { ...payload, cartReminders: true }, proof);
@@ -117,10 +119,14 @@ async function run() {
   assert.equal(response.status, 200);
   assert.equal((await response.json()).revision, 1);
   assert.equal((await post("/api/account/cart", cart, cookie)).status, 409);
-  assert.equal((await post("/api/forms/verify", { captchaToken: null })).status, 422);
-  const captcha = `qa-captcha-${randomUUID()}`;
-  assert.equal((await post("/api/forms/verify", { captchaToken: captcha })).status, 200);
-  assert.equal((await post("/api/forms/verify", { captchaToken: captcha })).status, 422);
+  assert.equal((await post("/api/forms/verify", { captchaToken: null, purpose: "search" })).status, 422);
+  assert.equal((await post("/api/forms/verify", {})).status, 422);
+  assert.equal((await post("/api/forms/verify", { purpose: "signup" })).status, 422);
+  const captcha = `qa-captcha-search-${randomUUID()}`;
+  assert.equal((await post("/api/forms/verify", { captchaToken: `qa-captcha-search-${randomUUID()}`, purpose: "contact" })).status, 422);
+  assert.equal((await post("/api/forms/verify", { purpose: "contact" })).status, 200);
+  assert.equal((await post("/api/forms/verify", { captchaToken: captcha, purpose: "search" })).status, 200);
+  assert.equal((await post("/api/forms/verify", { captchaToken: captcha, purpose: "search" })).status, 422);
   const runReminders = async (secret = process.env.CRON_SECRET) => {
     const result = await fetch(new URL("/api/internal/cart-reminders", base), { method: "POST", headers: { Authorization: `Bearer ${secret}` } });
     return { status: result.status, data: await result.json() };

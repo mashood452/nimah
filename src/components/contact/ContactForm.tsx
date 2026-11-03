@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import styles from "../page/Page.module.css";
-import { Recaptcha } from "../account/Recaptcha";
+import { Recaptcha, useRecaptcha } from "../account/Recaptcha";
 
 const topics = ["Frame advice", "Lenses and prescriptions", "An order", "Returns and exchanges", "Something else"];
 
@@ -15,8 +15,7 @@ type Errors = Partial<Record<"name" | "email" | "message", string>>;
 export function ContactForm({ email, whatsapp }: { email?: string; whatsapp?: string }) {
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<string>("");
-  const [token, setToken] = useState<string | null>(null);
-  const [generation, setGeneration] = useState(0);
+  const { ready, executeCaptcha } = useRecaptcha();
   const [pending, setPending] = useState(false);
 
   const connected = Boolean(email || whatsapp);
@@ -38,13 +37,14 @@ export function ContactForm({ email, whatsapp }: { email?: string; whatsapp?: st
       setStatus("");
       return;
     }
-    if (!token || pending) return;
+    if (!ready || pending) return;
     setPending(true);
     try {
-      const response = await fetch("/api/forms/verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ captchaToken: token }) });
-      if (!response.ok) { setStatus("Please complete the security check again."); return; }
+      const captchaToken = await executeCaptcha("contact");
+      const response = await fetch("/api/forms/verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ captchaToken, purpose: "contact" }) });
+      if (!response.ok) { setStatus("The security check was not accepted. Please try again."); return; }
     } catch { setStatus("The security check could not connect. Please try again."); return; }
-    finally { setPending(false); setToken(null); setGeneration((value) => value + 1); }
+    finally { setPending(false); }
 
     if (!connected) {
       setStatus("Our online contact form is being set up. Please check back soon.");
@@ -97,8 +97,8 @@ export function ContactForm({ email, whatsapp }: { email?: string; whatsapp?: st
       </p>
 
       <div>
-        <Recaptcha key={generation} onToken={setToken} />
-        <button type="submit" className={styles.btnPrimary} disabled={!token || pending}>
+        <Recaptcha />
+        <button type="submit" className={styles.btnPrimary} disabled={!ready || pending}>
           Send message
         </button>
       </div>

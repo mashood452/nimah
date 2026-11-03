@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { IconArrow } from "../navbar/icons";
-import { Recaptcha } from "./Recaptcha";
+import { Recaptcha, useRecaptcha } from "./Recaptcha";
 import styles from "./Account.module.css";
 
 type Errors = Partial<Record<"name" | "email" | "password" | "confirmPassword" | "terms" | "code", string>>;
@@ -28,8 +28,7 @@ export function AuthForm({ mode, destination = "/account" }: { mode: "login" | "
   const [phase, setPhase] = useState<Phase>(signup ? "email" : "login");
   const [email, setEmail] = useState("");
   const [challenge, setChallenge] = useState("");
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const [captchaKey, setCaptchaKey] = useState(0);
+  const { ready: captchaReady, executeCaptcha } = useRecaptcha();
   const [pending, setPending] = useState(false);
   const [cooldown, setCooldown] = useState(0);
   const [errors, setErrors] = useState<Errors>({});
@@ -43,7 +42,6 @@ export function AuthForm({ mode, destination = "/account" }: { mode: "login" | "
     return () => window.clearTimeout(timeout);
   }, [cooldown]);
 
-  function resetCaptcha() { setCaptchaToken(null); setCaptchaKey((value) => value + 1); }
   async function api(path: string, body: object) {
     const response = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
     const result = await response.json();
@@ -57,39 +55,41 @@ export function AuthForm({ mode, destination = "/account" }: { mode: "login" | "
   }
 
   async function sendCode() {
+    const captchaToken = await executeCaptcha("otp_request");
     const result = await api("/api/auth/otp/request", { email, captchaToken });
-    resetCaptcha();
     if (result) { setEmail(result.email); setChallenge(result.challengeId); setCooldown(result.resendAfter); setPhase("code"); }
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (pending) return;
+    if (pending || !captchaReady) return;
     const data = new FormData(event.currentTarget);
     setPending(true); setMessage(""); setSuccess(""); setErrors({});
     try {
       if (phase === "email") { await sendCode(); return; }
       if (phase === "code") {
+        const captchaToken = await executeCaptcha("otp_verify");
         const result = await api("/api/auth/otp/verify", { challengeId: challenge, code: data.get("code"), captchaToken });
-        resetCaptcha();
         if (result) { setPhase(signup ? "details" : "login"); setSuccess(signup ? "Email verified. Complete your account below." : "Email verified. Enter your password to log in."); }
         return;
       }
+      const captchaToken = await executeCaptcha(signup ? "signup" : "login");
       const result = await api(`/api/auth/${signup ? "signup" : "login"}`, {
         name: data.get("name"), email, password: data.get("password"), confirmPassword: data.get("confirmPassword"),
         terms: data.get("terms") === "on", remember: data.get("remember") === "on", cartReminders: data.get("cartReminders") === "on", captchaToken,
       });
-      if (!result) { resetCaptcha(); return; }
+      if (!result) return;
       window.location.assign(new URL(destination, window.location.origin).href);
     } catch {
-      setMessage("We could not connect. Please check your connection and try again."); resetCaptcha();
+      setMessage("We could not verify your request. Please refresh and try again.");
       requestAnimationFrame(() => errorRef.current?.focus());
     } finally { setPending(false); }
   }
 
   async function resendCode() {
+    if (pending || !captchaReady || cooldown > 0) return;
     setPending(true); setMessage("");
-    try { await sendCode(); } catch { setMessage("Your code could not be resent. Please try again."); resetCaptcha(); }
+    try { await sendCode(); } catch { setMessage("Your code could not be resent. Please try again."); }
     finally { setPending(false); }
   }
 
@@ -113,11 +113,11 @@ export function AuthForm({ mode, destination = "/account" }: { mode: "login" | "
       </>}
       {phase === "login" && <label className={styles.check}><input name="remember" type="checkbox" /><span>Keep me signed in for 30 days</span></label>}
     </>}
-    <Recaptcha key={captchaKey} onToken={setCaptchaToken} />
-    <button type="submit" className={styles.primary} disabled={pending || !captchaToken}>{pending ? "Please wait..." : label} {!pending && <IconArrow />}</button>
+    <Recaptcha />
+    <button type="submit" className={styles.primary} disabled={pending || !captchaReady}>{pending ? "Please wait..." : label} {!pending && <IconArrow />}</button>
     {phase === "code" && <>
-      <button className={styles.textButton} type="button" disabled={pending || cooldown > 0 || !captchaToken} onClick={() => void resendCode()}>{cooldown > 0 ? `Resend available in ${cooldown}s` : "Send a new code"}</button>
-      <button className={styles.textButton} type="button" disabled={pending} onClick={() => { setPhase("email"); setMessage(""); resetCaptcha(); }}>Use a different email</button>
+      <button className={styles.textButton} type="button" disabled={pending || cooldown > 0 || !captchaReady} onClick={() => void resendCode()}>{cooldown > 0 ? `Resend available in ${cooldown}s` : "Send a new code"}</button>
+      <button className={styles.textButton} type="button" disabled={pending} onClick={() => { setPhase("email"); setMessage(""); }}>Use a different email</button>
     </>}
     <p className={styles.switch}>{signup ? "Already have an account?" : "New to Nimah?"} <Link href={signup ? "/account/login" : "/account/signup"}>{signup ? "Log in" : "Create an account"}</Link></p>
     {!signup && <p className={styles.help}>Need a hand? <Link href="/contact">Contact our team</Link>.</p>}

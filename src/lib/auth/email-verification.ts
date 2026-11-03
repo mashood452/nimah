@@ -32,7 +32,7 @@ export async function requestEmailCode(request: Request) {
     emailSecret(); senderAddress(); smtpOptions();
     const addressLimit = await consumeLimit(`otp-request-address:${requestAddress(request)}`, 20, 3600);
     if (addressLimit) return limited(addressLimit);
-    await verifyCaptcha(body.captchaToken);
+    await verifyCaptcha(body.captchaToken, "otp_request");
     const emailLimit = await consumeLimit(`otp-request-email:${email}`, 5, 3600);
     if (emailLimit) return limited(emailLimit);
     const challengeId = newSessionToken();
@@ -65,7 +65,7 @@ export async function verifyEmailCode(request: Request) {
     }
     const retry = await consumeLimit(`otp-check-address:${requestAddress(request)}`, 30, 900);
     if (retry) return limited(retry);
-    await verifyCaptcha(body.captchaToken);
+    await verifyCaptcha(body.captchaToken, "otp_verify");
     const proof = newSessionToken();
     const result = await transaction(async (connection) => {
       const [rows] = await connection.execute<RowDataPacket[]>(`SELECT *, expires_at <= UTC_TIMESTAMP() AS expired

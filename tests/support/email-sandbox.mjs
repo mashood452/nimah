@@ -9,9 +9,10 @@ const used = new Set();
 globalThis.fetch = async (input, init) => {
   if (String(input) !== "https://www.google.com/recaptcha/api/siteverify") return originalFetch(input, init);
   const token = new URLSearchParams(init.body).get("response");
-  const success = /^qa-captcha-[a-f0-9-]{36}$/.test(token || "") && !used.has(token);
+  const match = /^qa-captcha-([a-z_]+)-[a-f0-9-]{36}$/.exec(token || "");
+  const success = !!match && !used.has(token);
   used.add(token);
-  return Response.json({ success, hostname: "nimahopticals.com", challenge_ts: new Date().toISOString() });
+  return Response.json({ success, action: match?.[1], score: 0.9, hostname: "nimahopticals.com", challenge_ts: new Date().toISOString() });
 };
 const createTransport = () => ({
   async sendMail(message) {

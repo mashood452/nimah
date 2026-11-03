@@ -53,16 +53,25 @@ test("Cart input ignores prices, bounds quantities and merges without doubling",
   assert.deepEqual(mergeSavedCarts([line], [line]), [line]);
 });
 
-test("CAPTCHA fails closed for missing, expired and foreign-host responses", async () => {
+test("v3 CAPTCHA requires the expected action, a passing score, a trusted host and a fresh token", async () => {
   const oldSecret = process.env.RECAPTCHA_SECRET_KEY, oldSite = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
   process.env.RECAPTCHA_SECRET_KEY = "test-only"; process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY = "test-only";
   const fake = (result: object) => (async () => Response.json(result)) as typeof fetch;
   try {
-    await assert.rejects(verifyCaptcha(undefined));
-    await assert.rejects(verifyCaptcha("test-response-token", fake({ success: false })));
-    await assert.rejects(verifyCaptcha("test-response-token", fake({ success: true, hostname: "attacker.example", challenge_ts: new Date().toISOString() })));
-    await assert.rejects(verifyCaptcha("test-response-token", fake({ success: true, hostname: "nimahopticals.com", challenge_ts: new Date(Date.now() - 180000).toISOString() })));
-    await verifyCaptcha("test-response-token", fake({ success: true, hostname: "nimahopticals.com", challenge_ts: new Date().toISOString() }));
+    const valid = { success: true, hostname: "nimahopticals.com", challenge_ts: new Date().toISOString(), action: "login", score: 0.9 };
+    await assert.rejects(verifyCaptcha(undefined, "login"));
+    for (const invalid of [
+      { success: false }, { success: "true" }, { hostname: "attacker.example" },
+      { challenge_ts: new Date(Date.now() - 180000).toISOString() }, { challenge_ts: new Date(Date.now() + 60000).toISOString() },
+      { action: "signup" }, { action: undefined }, { score: undefined }, { score: "0.9" }, { score: null }, { score: 0.49 }, { score: 1.1 },
+    ]) await assert.rejects(verifyCaptcha("test-response-token", "login", fake({ ...valid, ...invalid })));
+    await verifyCaptcha("test-response-token", "login", fake(valid));
+    await verifyCaptcha("test-response-token", "login", fake({ ...valid, score: 0.5 }));
+    // A legacy v2 response has neither action nor score and must never bypass v3 validation.
+    await assert.rejects(verifyCaptcha("test-response-token", "login", fake({ success: true, hostname: valid.hostname, challenge_ts: valid.challenge_ts })));
+    await assert.rejects(verifyCaptcha("test-response-token", "login", (async () => { throw new Error("offline"); }) as typeof fetch));
+    delete process.env.RECAPTCHA_SECRET_KEY;
+    await assert.rejects(verifyCaptcha("test-response-token", "login", fake(valid)));
   } finally {
     if (oldSecret === undefined) delete process.env.RECAPTCHA_SECRET_KEY; else process.env.RECAPTCHA_SECRET_KEY = oldSecret;
     if (oldSite === undefined) delete process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY; else process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY = oldSite;
