@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, type ReactNode } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { ProductTaxonomy } from "@/lib/product-taxonomy";
 import { filterProducts } from "@/lib/catalog-filters";
 import { ProductCard } from "../products/ProductCard";
@@ -18,17 +18,16 @@ const sorters: Record<Sort, ((a: Product, b: Product) => number) | null> = {
 };
 
 /** Category and frame-shape filters share the URL, so a selection can be bookmarked. */
-export function FilterableCatalogGrid({ products, taxonomy }: { products: Product[]; taxonomy: ProductTaxonomy }) {
-  const params = useSearchParams();
+export function FilterableCatalogGrid({ products, taxonomy, category = "", shape = "" }: {
+  products: Product[]; taxonomy: ProductTaxonomy; category?: string; shape?: string;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const category = params.get("category") ?? "";
-  const shape = params.get("shape") ?? "";
   const visible = filterProducts(products, { category, shape });
 
   function changeFilter(key: "category" | "shape" | "clear", value = "") {
-    const next = new URLSearchParams(params.toString());
+    const next = new URLSearchParams(window.location.search);
     if (key === "clear") { next.delete("category"); next.delete("shape"); }
     else if (value) next.set(key, value);
     else next.delete(key);

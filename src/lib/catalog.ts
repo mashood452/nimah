@@ -1,12 +1,13 @@
 ﻿import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
+import { connection } from "next/server";
 import type { ProductCategory } from "@/components/products/products-data";
 import { queryRows } from "./db";
 import { productFromRow } from "./db/mappers";
 import { tagsOf } from "./catalog-filters";
 import type { ProductTaxonomy } from "./product-taxonomy";
 
-export async function getProducts() {
+async function cachedProducts() {
   "use cache";
   cacheLife({ stale: 30, revalidate: 60, expire: 300 });
   cacheTag("products", "product-taxonomy");
@@ -20,7 +21,7 @@ export async function getProducts() {
   return rows.map(productFromRow);
 }
 
-export async function getProductTaxonomy(): Promise<ProductTaxonomy> {
+async function cachedProductTaxonomy(): Promise<ProductTaxonomy> {
   "use cache";
   cacheLife({ stale: 30, revalidate: 60, expire: 300 });
   cacheTag("product-taxonomy");
@@ -32,6 +33,17 @@ export async function getProductTaxonomy(): Promise<ProductTaxonomy> {
     categories: categories.map((row) => ({ code: String(row.code), slug: String(row.slug), name: String(row.name) })),
     shapes: shapes.map((row) => ({ slug: String(row.slug), name: String(row.name) })),
   };
+}
+
+// Wait for a request before entering a cached scope, so builds never open MySQL connections.
+export async function getProducts() {
+  await connection();
+  return cachedProducts();
+}
+
+export async function getProductTaxonomy(): Promise<ProductTaxonomy> {
+  await connection();
+  return cachedProductTaxonomy();
 }
 
 export const getProduct = async (slug: string) => (await getProducts()).find((product) => product.slug === slug);

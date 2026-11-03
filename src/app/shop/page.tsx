@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/shop" },
 };
 
-export default async function ShopPage() {
+export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
   const [products, taxonomy] = await Promise.all([getProducts(), getProductTaxonomy()]);
   return (
     <Catalog
@@ -31,6 +31,7 @@ export default async function ShopPage() {
       ]}
       products={products}
       filterTaxonomy={taxonomy}
+      filterQuery={searchParams}
       guideTitle="Shopping at Nimah"
       guide={[
         "Every frame in our collection is chosen for its shape, finish and comfort. Use the category filters to narrow the range, or sort by price to find the right fit for your budget.",

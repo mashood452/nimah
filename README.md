@@ -31,7 +31,7 @@ Legal pages are drafts. Have a lawyer review them, and confirm every value in `s
 
 ## Structure
 
-Run the [database setup](database/README.md) before starting or building the site. The initial migration also prepares accounts, addresses, orders, order items and payments. Initial content lives in `database/seed-data.ts` and is imported only by the seed command.
+Run the [database setup](database/README.md) before serving the site. Builds do not connect to MySQL; database content loads and caches at request time. On Hostinger, set `DB_HOST=127.0.0.1` in the deployment environment. The initial migration also prepares accounts, addresses, orders, order items and payments. Initial content lives in `database/seed-data.ts` and is imported only by the seed command.
 
 ```
 src/app/                 routes (one folder per URL)

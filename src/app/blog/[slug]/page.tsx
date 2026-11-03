@@ -20,15 +20,10 @@ type Params = { slug: string };
 // New database slugs resolve at runtime. Unknown slugs return a true 404.
 export const instant = false;
 
-export async function generateStaticParams(): Promise<Params[]> {
-  const posts = await getPosts();
-  return posts.length ? posts.map((p) => ({ slug: p.slug })) : [{ slug: "__empty-journal__" }];
-}
-
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost(slug);
-  if (!post) return {};
+  if (!post) notFound();
   return postMetadata(post);
 }
 

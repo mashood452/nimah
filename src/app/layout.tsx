@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
+import { connection } from "next/server";
 import "./globals.css";
 import { siteConfig } from "@/lib/site";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
@@ -31,7 +32,11 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { themeColor: "#ffffff" };
 
+// The shared catalog provider is runtime-only. Allow the root to wait before sending a response.
+export const instant = false;
+
 export default async function RootLayout({ children }: LayoutProps<"/">) {
+  await connection();
   const products = await getProducts();
   return (
     <html lang="en" className={manrope.variable}>

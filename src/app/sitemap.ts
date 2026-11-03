@@ -6,15 +6,13 @@ import { lensGuides } from "@/lib/lenses";
 import { siteConfig } from "@/lib/site";
 import { frameStyles } from "@/lib/styles";
 import { getProducts } from "@/lib/catalog";
-import { cacheLife, cacheTag } from "next/cache";
+import { connection } from "next/server";
 
 /**
  * Every public page. Pages that should not be indexed (bag, wishlist, search, account) are left out on purpose.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  "use cache";
-  cacheLife({ stale: 30, revalidate: 60, expire: 300 });
-  cacheTag("products", "blog-posts");
+  await connection();
   const [products, posts] = await Promise.all([getProducts(), getPosts()]);
   const paths = [
     "",

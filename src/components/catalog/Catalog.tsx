@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense, type ReactNode } from "react";
-import type { ProductTaxonomy } from "@/lib/product-taxonomy";
+import type { CatalogQuery, ProductTaxonomy } from "@/lib/product-taxonomy";
 import { breadcrumbSchema } from "@/lib/schema";
 import { siteConfig } from "@/lib/site";
 import { Brands } from "../brands/Brands";
@@ -41,6 +41,7 @@ type Props = {
   chipGroups?: ChipGroup[];
   products: Product[];
   filterTaxonomy?: ProductTaxonomy;
+  filterQuery?: Promise<CatalogQuery>;
   /** extra products shown below the main grid */
   more?: Product[];
   moreTitle?: string;
@@ -53,6 +54,15 @@ type Props = {
   emptyState?: ReactNode;
 };
 
+async function FilteredResults({ products, taxonomy, query }: {
+  products: Product[]; taxonomy: ProductTaxonomy; query?: Promise<CatalogQuery>;
+}) {
+  const params = await query ?? {};
+  const category = Array.isArray(params.category) ? params.category[0] : params.category;
+  const shape = Array.isArray(params.shape) ? params.shape[0] : params.shape;
+  return <FilterableCatalogGrid products={products} taxonomy={taxonomy} category={category} shape={shape} />;
+}
+
 export function Catalog({
   title,
   intro,
@@ -60,6 +70,7 @@ export function Catalog({
   chipGroups = [],
   products,
   filterTaxonomy,
+  filterQuery,
   more = [],
   moreTitle,
   guideTitle,
@@ -120,7 +131,7 @@ export function Catalog({
       <section className={styles.results} aria-label={`${title} products`}>
         {filterTaxonomy ? (
           <Suspense fallback={<p aria-busy="true">Loading eyewear...</p>}>
-            <FilterableCatalogGrid products={products} taxonomy={filterTaxonomy} />
+            <FilteredResults products={products} taxonomy={filterTaxonomy} query={filterQuery} />
           </Suspense>
         ) : products.length === 0 ? (
           emptyState

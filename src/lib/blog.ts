@@ -1,11 +1,12 @@
 ﻿import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
+import { connection } from "next/server";
 import { queryRows } from "./db";
 import { postFromRow } from "./db/mappers";
 
 export type { Post } from "./blog-types";
 
-export async function getPosts() {
+async function cachedPosts() {
   "use cache";
   cacheLife({ stale: 30, revalidate: 60, expire: 300 });
   cacheTag("blog-posts", "product-taxonomy");
@@ -15,6 +16,11 @@ export async function getPosts() {
     LEFT JOIN product_categories c ON c.id = b.product_category_id AND c.is_active = 1
     WHERE b.status = 'published' AND b.published_at <= UTC_TIMESTAMP() ORDER BY b.published_at DESC, b.id DESC`);
   return rows.map(postFromRow);
+}
+
+export async function getPosts() {
+  await connection();
+  return cachedPosts();
 }
 
 export const getPost = async (slug: string) => (await getPosts()).find((post) => post.slug === slug);

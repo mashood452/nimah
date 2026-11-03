@@ -17,15 +17,10 @@ type Params = { slug: string };
 // New database slugs resolve at runtime. Unknown slugs return a true 404.
 export const instant = false;
 
-export async function generateStaticParams(): Promise<Params[]> {
-  const products = await getProducts();
-  return products.length ? products.map((p) => ({ slug: p.slug })) : [{ slug: "__empty-catalog__" }];
-}
-
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
   const p = await getProduct(slug);
-  if (!p) return {};
+  if (!p) notFound();
   return productMetadata(p);
 }
 

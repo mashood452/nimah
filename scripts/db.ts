@@ -4,6 +4,7 @@ import path from "node:path";
 import { loadEnvConfig } from "@next/env";
 import type { Pool, RowDataPacket } from "mysql2/promise";
 import { createDatabasePool } from "../src/lib/db/connection";
+import { databaseErrorMessage } from "../src/lib/db/errors";
 import { mediaKey, postFromRow, productFromRow } from "../src/lib/db/mappers";
 import { posts, products, productInfo } from "../database/seed-data";
 
@@ -121,11 +122,7 @@ async function main() {
   } catch (error) {
     // Do not print driver messages, SQL, connection URLs or passwords.
     const code = error && typeof error === "object" && "code" in error ? String(error.code) : undefined;
-    console.error(code ? `Database command failed (${code}). Check credentials, Remote MySQL allowlisting and schema.` : error instanceof Error ? error.message : "Database command failed.");
-    if (code === "ER_ACCESS_DENIED_ERROR" && error instanceof Error) {
-      const sourceHost = error.message.match(/Access denied for user '[^']+'@'([^']+)'/)?.[1];
-      if (sourceHost) console.error(`Hostinger rejected source host ${sourceHost}. Verify the password, database-user assignment and Remote MySQL allowlist.`);
-    }
+    console.error(code ? databaseErrorMessage(error) : error instanceof Error ? error.message : "Database command failed.");
     process.exitCode = 1;
   } finally { await db?.end(); }
 }

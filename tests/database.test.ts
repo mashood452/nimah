@@ -3,9 +3,11 @@ import { test } from "node:test";
 import { products, posts, productInfo } from "../database/seed-data";
 import { productFromRow, postFromRow, mediaKey } from "../src/lib/db/mappers";
 import { productMetadata, postMetadata } from "../src/lib/content-metadata";
-import { searchProducts } from "../src/lib/catalog-filters";
+import { filterProducts, searchProducts } from "../src/lib/catalog-filters";
+import { categoryHref } from "../src/lib/product-taxonomy";
 import { mediaUrl } from "../src/lib/media";
-import { createDatabasePool } from "../src/lib/db/connection";
+import { createDatabasePool, databaseConnectionOptions } from "../src/lib/db/connection";
+import { databaseErrorMessage } from "../src/lib/db/errors";
 
 test("blog SEO columns stay distinct from article title, excerpt and thumbnail", () => {
   const post = postFromRow({
@@ -38,6 +40,9 @@ test("every seeded product survives the database column mapping and remains sear
     const info = productInfo[product.slug];
     return productFromRow({
       ...product, price: product.price.toFixed(2), swatches: JSON.stringify(product.swatches),
+      category_slug: product.category === "Blue-Cut" ? "blue-light-glasses" : product.category.toLowerCase(),
+      category_label: product.category === "Blue-Cut" ? "Blue-Cut Glasses" : product.category,
+      shape_label: product.shape === "rectangle" ? "Rectangle" : product.shape,
       description: info.description, tags: JSON.stringify(info.tags), features: JSON.stringify(info.features),
       thumbnail_key: mediaKey(product.image, "products"), thumbnail_alt: `${product.name} photograph`,
       meta_title: `SEO ${product.name}`, meta_description: `Description for ${product.name}`, keywords: [product.name],
@@ -46,12 +51,39 @@ test("every seeded product survives the database column mapping and remains sear
   });
   for (const product of mapped) {
     assert.equal(typeof product.price, "number");
+    assert.ok(product.categorySlug);
+    assert.ok(product.categoryLabel);
+    assert.ok(product.shapeLabel);
     assert.ok(product.image?.startsWith("products/"));
     assert.equal(productMetadata(product).title, `SEO ${product.name}`);
     assert.deepEqual(searchProducts(mapped, product.name).map((result) => result.slug), [product.slug]);
   }
   assert.deepEqual(searchProducts(mapped, "polarized sunglasses").map((product) => product.slug), ["aurelia-aviator", "marlowe-square"]);
   assert.deepEqual(searchProducts(mapped, "   "), []);
+});
+
+test("category and shape filters combine independently, including optical frame shapes", () => {
+  const catalog = products.map((product) => ({ ...product,
+    categorySlug: product.category === "Blue-Cut" ? "blue-light-glasses" : product.category.toLowerCase(),
+  }));
+  const slugs = (category: string, shape: string) => filterProducts(catalog, { category, shape }).map((product) => product.slug);
+  assert.equal(filterProducts(catalog, {}).length, 12);
+  assert.equal(slugs("sunglasses", "").length, 6);
+  assert.equal(slugs("blue-light-glasses", "").length, 3);
+  assert.deepEqual(slugs("sunglasses", "round"), ["luna-round"]);
+  assert.deepEqual(slugs("eyeglasses", "browline"), ["ellis-optical"]);
+  assert.deepEqual(slugs("eyeglasses", "rectangle"), ["orion-optical"]);
+  assert.deepEqual(slugs("blue-light-glasses", "aviator"), []);
+  assert.deepEqual(slugs("unavailable", ""), []);
+});
+
+test("new categories work through shop filters without needing another route", () => {
+  assert.equal(categoryHref("sunglasses"), "/sunglasses");
+  assert.equal(categoryHref("blue-light-glasses"), "/blue-light-glasses");
+  assert.equal(categoryHref("sports-eyewear"), "/shop?category=sports-eyewear");
+  const custom = { ...products[0], category: "Sports", categorySlug: "sports-eyewear", categoryLabel: "Sports Eyewear", shape: "wraparound", shapeLabel: "Wraparound" };
+  assert.deepEqual(filterProducts([custom], { category: "sports-eyewear", shape: "wraparound" }), [custom]);
+  assert.deepEqual(searchProducts([custom], "sports eyewear wraparound"), [custom]);
 });
 
 test("all seeded articles preserve body, thumbnail and publication mappings", () => {
@@ -88,4 +120,30 @@ test("connection setup rejects missing credentials without exposing the connecti
   assert.throws(() => createDatabasePool({ DATABASE_URL: "mysql://test:raw%password@localhost:3306/nimah" }), /Percent-encode/);
   const pool = createDatabasePool({ DATABASE_URL: "mysql://test:encoded%40password@localhost:3306/nimah" });
   await pool.end();
+});
+
+test("deployment host overrides preserve URL credentials and avoid localhost IPv6 resolution", () => {
+  const env = { DATABASE_URL: "mysql://test:encoded%25%40%24password@srv2060.hstgr.io:3306/nimah" };
+  const local = databaseConnectionOptions(env);
+  const production = databaseConnectionOptions({ ...env, DB_HOST: "127.0.0.1" });
+  assert.equal(local.host, "srv2060.hstgr.io");
+  assert.equal(production.host, "127.0.0.1");
+  assert.equal(production.password, "encoded%@$password");
+  assert.equal(production.user, local.user);
+  assert.equal(production.database, local.database);
+  assert.equal(databaseConnectionOptions({ ...env, DB_HOST: "localhost" }).host, "127.0.0.1");
+  assert.equal(databaseConnectionOptions({ DATABASE_URL: "mysql://test:password@localhost:3306/nimah" }).host, "127.0.0.1");
+  assert.throws(() => databaseConnectionOptions({ ...env, DB_HOST: "https://wrong.example" }), /DB_HOST must be/);
+});
+
+test("database diagnostics identify rejected source hosts without disclosing driver secrets", () => {
+  const error = Object.assign(new Error("Access denied for user 'private-user'@'203.0.113.20' (using password: YES). mysql://private-user:private-password@example.test/private-db SELECT secret"), { code: "ER_ACCESS_DENIED_ERROR" });
+  const diagnostic = databaseErrorMessage(error);
+  assert.ok(diagnostic.includes("203.0.113.20"));
+  assert.ok(diagnostic.includes("DB_HOST=127.0.0.1"));
+  for (const secret of ["private-user", "private-password", "private-db", "SELECT secret", "mysql://"]) {
+    assert.ok(!diagnostic.includes(secret));
+  }
+  assert.ok(!diagnostic.includes("db:migrate"));
+  assert.ok(databaseErrorMessage({ code: "ER_NO_SUCH_TABLE" }).includes("db:migrate"));
 });

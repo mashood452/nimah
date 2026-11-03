@@ -1,7 +1,7 @@
-import { createPool, type Pool } from "mysql2/promise";
+import { createPool, type Pool, type PoolOptions } from "mysql2/promise";
 
 // Shared by the server-only repository and local maintenance scripts.
-export function createDatabasePool(env: Record<string, string | undefined> = process.env): Pool {
+export function databaseConnectionOptions(env: Record<string, string | undefined> = process.env): PoolOptions {
   if (!env.DATABASE_URL) throw new Error("Set DATABASE_URL in .env.local (or the hosting environment) before using MySQL.");
   let url: URL;
   try { url = new URL(env.DATABASE_URL); } catch {
@@ -20,13 +20,20 @@ export function createDatabasePool(env: Record<string, string | undefined> = pro
   } catch {
     throw new Error("DATABASE_URL contains invalid password escaping. Percent-encode special characters before saving it.");
   }
-  const pool = createPool({
-    host: url.hostname, port: Number(url.port || 3306), user, password, database,
+  const configuredHost = env.DB_HOST?.trim() || url.hostname;
+  if (/\s|\//.test(configuredHost)) throw new Error("DB_HOST must be a hostname or IP address, without a URL scheme.");
+  return {
+    host: configuredHost === "localhost" ? "127.0.0.1" : configuredHost,
+    port: Number(url.port || 3306), user, password, database,
     charset: "utf8mb4", timezone: "Z", dateStrings: true,
     connectionLimit: 5, maxIdle: 2, idleTimeout: 60_000, connectTimeout: 10_000,
     waitForConnections: true, queueLimit: 100, multipleStatements: false,
     ...(env.DATABASE_SSL === "true" ? { ssl: { rejectUnauthorized: true } } : {}),
-  });
+  };
+}
+
+export function createDatabasePool(env: Record<string, string | undefined> = process.env): Pool {
+  const pool = createPool(databaseConnectionOptions(env));
   pool.on("connection", (connection) => {
     connection.query("SET time_zone = '+00:00'");
   });
