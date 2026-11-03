@@ -28,6 +28,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  serverExternalPackages: ["nodemailer"],
   // Resolve database-backed metadata before headers are sent, including missing-slug 404s.
   htmlLimitedBots: /.*/,
   images: {

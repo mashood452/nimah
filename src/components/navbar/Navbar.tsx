@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { CaptchaSearchForm } from "../account/CaptchaSearchForm";
 import { useCart, useCartDrawer, useWishlist } from "@/lib/shop-store";
 import { announcement, navItems, trending } from "./nav-data";
 import {
@@ -54,7 +55,8 @@ export function Navbar({ accountName }: { accountName?: string }) {
   }, []);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    // Two thresholds, so the bar does not chatter when the scroll position rests near a boundary.
+    const onScroll = () => setScrolled((was) => (window.scrollY > 40 ? true : window.scrollY < 20 ? false : was));
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -273,20 +275,7 @@ export function Navbar({ accountName }: { accountName?: string }) {
           inert={!searchOpen}
         >
           <div className={styles.searchInner}>
-            <form action="/search" method="get" role="search" className={styles.searchForm}>
-              <IconSearch />
-              <input
-                ref={searchRef}
-                type="search"
-                name="q"
-                placeholder="Search sunglasses, blue-cut, frames…"
-                aria-label="Search products"
-                autoComplete="off"
-              />
-              <button type="submit" className={styles.searchGo}>
-                Search
-              </button>
-            </form>
+            {searchOpen && <CaptchaSearchForm className={styles.searchForm} buttonClassName={styles.searchGo} placeholder="Search sunglasses, blue-cut, frames…" inputRef={searchRef} icon={<IconSearch />} />}
             <div className={styles.trending}>
               <span>Trending</span>
               {trending.map((t) => (
@@ -326,10 +315,7 @@ export function Navbar({ accountName }: { accountName?: string }) {
           </button>
         </div>
 
-        <form action="/search" method="get" role="search" className={styles.drawerSearch}>
-          <IconSearch />
-          <input type="search" name="q" placeholder="Search" aria-label="Search products" />
-        </form>
+        {drawerOpen && <CaptchaSearchForm className={styles.drawerSearch} placeholder="Search eyewear" icon={<IconSearch />} />}
 
         <nav className={styles.drawerNav} aria-label="Mobile">
           {navItems.map((item) => {

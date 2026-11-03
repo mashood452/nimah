@@ -11,6 +11,8 @@ import { CartDrawer } from "@/components/shop/CartDrawer";
 import { ProductCatalogProvider } from "@/components/shop/ProductCatalogProvider";
 import { getProducts } from "@/lib/catalog";
 import { getCustomer } from "@/lib/auth/session";
+import { CartSync } from "@/components/shop/CartSync";
+import { startCartReminderWorker } from "@/lib/email/worker";
 
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 
@@ -38,11 +40,13 @@ export const instant = false;
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   await connection();
+  startCartReminderWorker();
   const [products, customer] = await Promise.all([getProducts(), getCustomer()]);
   return (
     <html lang="en" className={manrope.variable}>
       <body>
         <ProductCatalogProvider products={products}>
+          <CartSync accountId={customer?.id ?? null} />
           <Navbar accountName={customer?.name} />
           <CartDrawer />
           {children}

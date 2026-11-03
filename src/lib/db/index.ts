@@ -49,3 +49,16 @@ export async function transaction<T>(work: (connection: PoolConnection) => Promi
     throw new DatabaseError(error);
   } finally { connection.release(); }
 }
+
+export async function databaseJobLock<T>(name: string, work: () => Promise<T>): Promise<T | null> {
+  const connection = await pool().getConnection();
+  let acquired = false;
+  try {
+    const [rows] = await connection.execute<RowDataPacket[]>("SELECT GET_LOCK(?, 0) AS acquired", [name]);
+    acquired = rows[0].acquired === 1;
+    return acquired ? await work() : null;
+  } finally {
+    if (acquired) await connection.execute("SELECT RELEASE_LOCK(?)", [name]).catch(() => {});
+    connection.release();
+  }
+}

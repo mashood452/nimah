@@ -1,10 +1,23 @@
+/*
+ * The header always takes the same space in the page (announcement + full-size bar), so shrinking the bar on
+ * scroll can never move the content or the scroll position. That feedback loop was what made the nav flicker.
+ * It sticks at -announce-h, so the announcement strip simply scrolls away with the page and the bar stays put.
+ * The empty space left under the compact bar ignores the pointer, so clicks reach the page beneath it.
+ */
 .header {
+  --announce-h: 36px;
+  --bar-full: 104px;
   --bar-h: 104px;
   --logo-h: 76px;
   position: sticky;
-  top: 0;
+  top: calc(var(--announce-h) * -1);
   z-index: 50;
+  height: calc(var(--announce-h) + var(--bar-full) + 1px);
+  pointer-events: none;
   color: var(--nm-text);
+}
+.header > * {
+  pointer-events: auto;
 }
 .header[data-scrolled="true"] {
   --bar-h: 76px;
@@ -17,7 +30,7 @@
   align-items: center;
   justify-content: center;
   gap: 18px;
-  height: 36px;
+  height: var(--announce-h);
   overflow: hidden;
   padding: 0 16px;
   font-size: 11px;
@@ -27,12 +40,6 @@
   color: var(--nm-champagne);
   background: var(--nm-accent);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  transition: height 0.35s ease, opacity 0.25s ease, border-color 0.3s;
-}
-.header[data-scrolled="true"] .announce {
-  height: 0;
-  opacity: 0;
-  border-color: transparent;
 }
 .announce > span {
   min-width: 0;
@@ -211,7 +218,7 @@
 /* ---------- dropdown panels ---------- */
 .panel {
   position: absolute;
-  top: 100%;
+  top: calc(var(--announce-h) + var(--bar-h) + 1px);
   left: 0;
   right: 0;
   margin-inline: auto;
@@ -620,6 +627,7 @@
 /* ---------- responsive ---------- */
 @media (max-width: 1179px) {
   .header {
+    --bar-full: 76px;
     --bar-h: 76px;
     --logo-h: 54px;
   }

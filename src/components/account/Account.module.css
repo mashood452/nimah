@@ -38,6 +38,13 @@
 .switch, .help { margin: 0; color: var(--nm-muted); text-align: center; font-size: 13px; line-height: 1.7; }
 .help { font-size: 12px; }
 .emptyNotice { display: none; }
+.step { margin: 0; color: var(--nm-accent); font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.verification { margin: 0; color: var(--nm-muted); font-size: 14px; line-height: 1.8; overflow-wrap: anywhere; }
+.codeInput { text-align: center; letter-spacing: .4em; font-size: 28px !important; font-variant-numeric: tabular-nums; }
+.textButton { padding: 4px 0; align-self: start; border: 0; background: transparent; color: var(--nm-accent); text-decoration: underline; text-underline-offset: 3px; font: 500 13px var(--font-sans), sans-serif; cursor: pointer; }
+.textButton:disabled { opacity: .55; cursor: not-allowed; }
+.captchaWrap { min-height: 78px; max-width: 100%; }
+.verified { color: #315a45; font-size: 12px; }
 .error, .success { padding: 14px 16px; font-size: 13px; line-height: 1.7; border: 1px solid; }
 .error { color: #842431; border-color: #e8bbc1; background: #fff6f7; }
 .success { color: #315a45; border-color: #bcd4c6; background: #f2f8f4; margin-bottom: 24px; }
@@ -93,3 +100,4 @@
   .panel { padding: 24px 20px; }
   .orders th, .orders td { padding: 12px 3px; font-size: 11px; }
 }
+@media (max-width: 380px) { .captchaBox { width: 304px; height: 68px; transform: scale(.85); transform-origin: left top; } }

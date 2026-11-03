@@ -95,7 +95,7 @@ async function seed(db: Pool) {
 
 async function check(db: Pool) {
   await db.query("SELECT 1");
-  const tables = ["accounts", "account_addresses", "account_sessions", "auth_rate_limits", "product_categories", "product_shapes", "products", "product_images", "blog_posts", "orders", "order_items", "payments"];
+  const tables = ["accounts", "account_addresses", "account_sessions", "auth_rate_limits", "email_verifications", "customer_carts", "customer_cart_items", "email_deliveries", "product_categories", "product_shapes", "products", "product_images", "blog_posts", "orders", "order_items", "payments"];
   for (const table of tables) {
     const [rows] = await db.query<RowDataPacket[]>(`SELECT COUNT(*) AS total FROM ${table}`);
     console.log(`${table}: ${rows[0].total} rows`);

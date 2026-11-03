@@ -3,13 +3,15 @@
 /**
  * A tiny browser-side store for the shopping bag and the wishlist.
  * Both are kept in localStorage, so they survive page loads and are shared between tabs.
- * There is no server, so nothing here leaves the visitor's device.
+ * Anonymous bags stay on the device. CartSync saves authenticated bags to the customer's account.
  */
 import { useCallback, useSyncExternalStore } from "react";
+import { parseCartLines } from "./cart-data";
 
 export type CartLine = { slug: string; color: string; qty: number };
 
-const CART_KEY = "nimah.cart.v1";
+const GUEST_CART_KEY = "nimah.cart.v1";
+let CART_KEY = GUEST_CART_KEY;
 const WISHLIST_KEY = "nimah.wishlist.v1";
 const MAX_QTY = 10;
 
@@ -18,6 +20,7 @@ const EMPTY_WISHLIST: string[] = [];
 
 const listeners = new Set<() => void>();
 const cache = new Map<string, unknown>();
+const changedKeys = new Set<string>();
 
 function read<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
@@ -25,7 +28,10 @@ function read<T>(key: string, fallback: T): T {
   let value = fallback;
   try {
     const raw = window.localStorage.getItem(key);
-    if (raw) value = JSON.parse(raw) as T;
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      value = key.startsWith(GUEST_CART_KEY) ? (parseCartLines(parsed) ?? fallback) as T : parsed as T;
+    }
   } catch {
     /* private mode or corrupt data: start empty */
   }
@@ -34,6 +40,7 @@ function read<T>(key: string, fallback: T): T {
 }
 
 function write<T>(key: string, value: T) {
+  changedKeys.add(key);
   cache.set(key, value);
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
@@ -59,6 +66,23 @@ function subscribe(listener: () => void) {
 }
 
 /* ---------- bag ---------- */
+
+export function bindCartAccount(accountId: string | null) {
+  const next = accountId ? `${GUEST_CART_KEY}.account.${accountId}` : GUEST_CART_KEY;
+  if (CART_KEY !== next) { CART_KEY = next; listeners.forEach((listener) => listener()); }
+}
+
+export const currentCartLines = () => read<CartLine[]>(CART_KEY, EMPTY_CART);
+export function hasLocalCart() {
+  try { return changedKeys.has(CART_KEY) || window.localStorage.getItem(CART_KEY) !== null; }
+  catch { return changedKeys.has(CART_KEY); }
+}
+export const replaceCartLines = (lines: CartLine[]) => write(CART_KEY, lines);
+export function consumeGuestCart() {
+  const lines = read<CartLine[]>(GUEST_CART_KEY, EMPTY_CART);
+  write(GUEST_CART_KEY, EMPTY_CART);
+  return lines;
+}
 
 export function useCart() {
   const lines = useSyncExternalStore(

@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import styles from "../page/Page.module.css";
+import { Recaptcha } from "../account/Recaptcha";
 
 const topics = ["Frame advice", "Lenses and prescriptions", "An order", "Returns and exchanges", "Something else"];
 
@@ -14,10 +15,13 @@ type Errors = Partial<Record<"name" | "email" | "message", string>>;
 export function ContactForm({ email, whatsapp }: { email?: string; whatsapp?: string }) {
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<string>("");
+  const [token, setToken] = useState<string | null>(null);
+  const [generation, setGeneration] = useState(0);
+  const [pending, setPending] = useState(false);
 
   const connected = Boolean(email || whatsapp);
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     const name = String(data.get("name") ?? "").trim();
@@ -34,6 +38,13 @@ export function ContactForm({ email, whatsapp }: { email?: string; whatsapp?: st
       setStatus("");
       return;
     }
+    if (!token || pending) return;
+    setPending(true);
+    try {
+      const response = await fetch("/api/forms/verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ captchaToken: token }) });
+      if (!response.ok) { setStatus("Please complete the security check again."); return; }
+    } catch { setStatus("The security check could not connect. Please try again."); return; }
+    finally { setPending(false); setToken(null); setGeneration((value) => value + 1); }
 
     if (!connected) {
       setStatus("Our online contact form is being set up. Please check back soon.");
@@ -86,7 +97,8 @@ export function ContactForm({ email, whatsapp }: { email?: string; whatsapp?: st
       </p>
 
       <div>
-        <button type="submit" className={styles.btnPrimary}>
+        <Recaptcha key={generation} onToken={setToken} />
+        <button type="submit" className={styles.btnPrimary} disabled={!token || pending}>
           Send message
         </button>
       </div>

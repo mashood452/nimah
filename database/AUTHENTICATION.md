@@ -6,14 +6,16 @@ Run `npm run db:migrate` before deploying the account feature. Migration `003_cu
 
 | Path | Behavior |
 |---|---|
-| `/account/signup` | Customer name, email, password, confirmation and required terms/privacy agreement |
+| `/account/signup` | CAPTCHA, email OTP verification, then name, password, confirmation and terms/privacy agreement |
 | `/account/login` | Email/password login and optional persistent login |
 | `/account` | Protected personal details and the current customer's ten most recent orders |
 | `POST /api/auth/signup` | Validates and creates a customer, then starts a session |
 | `POST /api/auth/login` | Verifies credentials and starts a new random session |
 | `POST /api/auth/logout` | Deletes the current database session and expires its cookie |
+| `POST /api/auth/otp/request` | Checks CAPTCHA, throttles requests and emails a six-digit code |
+| `POST /api/auth/otp/verify` | Checks CAPTCHA and code, then sets a short-lived HttpOnly email proof |
 
-The forms provide password visibility controls, autocomplete hints, field errors and pending states. The navigation reflects whether the current request is authenticated. The bag and wishlist still belong to the visitor's browser; this release does not synchronize them across devices or add checkout.
+The forms provide password visibility controls, autocomplete hints, field errors and pending states. The navigation reflects whether the current request is authenticated. Verified customers' bags are synchronized to MySQL; guest bags and wishlists stay in the browser. Checkout is not implemented.
 
 ## Authentication behavior
 
@@ -27,22 +29,31 @@ All authentication writes require POST, a same-origin Origin header and an appli
 
 Login limits are five attempts per normalized email per 15 minutes and 30 per address per 15 minutes. Signup limits are five attempts per email and ten per address per hour. Counters live in MySQL so they work across processes. A successful login resets the email's failed-attempt counter. Missing users and incorrect passwords receive the same credential error and both perform a scrypt calculation. Expired sessions and old rate-limit buckets are pruned during account activity.
 
-Terms acceptance is recorded with the current version on signup. `email_verified_at` remains null: this release does not send verification or password-reset emails. Those flows need a transactional email provider before being enabled. No email address is labelled as verified in the account UI.
+Terms acceptance is recorded with the current version on signup. New accounts require verified mailbox ownership and Google reCAPTCHA v2 Checkbox. Existing unverified customers must verify their email and then enter their password. Password-reset emails are not implemented. See [email automation](EMAIL_AUTOMATION.md) for configuration and delivery behavior.
 
 ## Verification
 
 ```sh
 npm run test:auth
 npm run test:db
+npm run test:email
 npm run build
 ```
 
-For end-to-end checks, start a local production server on port 3100 with the same `.env.local`, then run:
+For end-to-end checks, start a local production server on port 3100 with the same `.env.local` and the test-only SMTP/CAPTCHA sandbox. In PowerShell:
 
-```sh
+```powershell
+$env:NIMAH_LOCAL_EMAIL_TEST='1'
+$env:NIMAH_EMAIL_CAPTURE="$PWD/.next/test-email/messages.jsonl"
+New-Item -ItemType Directory -Force .next/test-email
+$sandboxUrl = [System.Uri]::new("$PWD/tests/support/email-sandbox.mjs").AbsoluteUri
+$env:NODE_OPTIONS="--import=$sandboxUrl"
+$env:CART_REMINDER_WORKER='false'
+npm run start -- --hostname 127.0.0.1 --port 3100
+# In a second terminal, set the same NIMAH_EMAIL_CAPTURE path, then:
 npm run test:auth:integration
 ```
 
 The integration test accepts only a loopback server URL. It creates uniquely named temporary QA accounts and orders, verifies cookie flags, signup/login/logout, duplicate signup, consent validation, account isolation, expiration, cross-site protection and login throttling, then deletes only its generated records. It never prints passwords or session tokens.
 
-No new application secrets or external authentication services are required. Keep Hostinger's `DB_HOST=127.0.0.1` override and the existing database URL. Builds still succeed without database access; authentication reads and writes occur at request time.
+The test sandbox is restricted to a local test process and blocks real email recipients. Never set its NODE_OPTIONS or NIMAH_LOCAL_EMAIL_TEST in production. Keep Hostinger's `DB_HOST=127.0.0.1` override and the existing database URL. Builds still succeed without database access; authentication reads and writes occur at request time.

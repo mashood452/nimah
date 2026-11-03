@@ -7,6 +7,7 @@ import { useProducts } from "./ProductCatalogProvider";
 import { EmptyState } from "../page/PageKit";
 import { ProductCard } from "../products/ProductCard";
 import styles from "./Shop.module.css";
+import { CaptchaSearchForm } from "../account/CaptchaSearchForm";
 
 const popular = ["Aviator", "Polarized", "Blue-cut", "Cat-eye", "Round", "Optical"];
 
@@ -18,18 +19,7 @@ export function SearchView() {
 
   return (
     <>
-      <form action="/search" method="get" role="search" className={styles.searchForm}>
-        <input
-          key={query}
-          type="search"
-          name="q"
-          defaultValue={query}
-          placeholder="Search sunglasses, blue-cut, frames"
-          aria-label="Search products"
-          autoComplete="off"
-        />
-        <button type="submit">Search</button>
-      </form>
+      <CaptchaSearchForm key={query} className={styles.searchForm} defaultValue={query} placeholder="Search sunglasses, blue-cut, frames" />
 
       {!query && (
         <div className={styles.suggest}>

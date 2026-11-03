@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LogoutButton } from "@/components/account/LogoutButton";
+import { EmailPreferences } from "@/components/account/EmailPreferences";
 import { requireCustomer } from "@/lib/auth/session";
 import { queryRows } from "@/lib/db";
 import styles from "@/components/account/Account.module.css";
@@ -28,6 +29,7 @@ export default async function AccountPage() {
           {customer.phone && <div><dt>Phone</dt><dd>{customer.phone}</dd></div>}
           <div><dt>Member since</dt><dd>{date(customer.joinedAt)}</dd></div>
         </dl>
+        <EmailPreferences enabled={customer.cartReminders} />
       </section>
       <section className={styles.panel} aria-labelledby="orders-title"><h2 id="orders-title">Recent orders</h2>
         {orders.length ? <table className={styles.orders}><caption className={styles.emptyNotice}>Your ten most recent orders</caption><thead><tr><th scope="col">Order</th><th scope="col">Date</th><th scope="col">Status</th><th scope="col">Total</th></tr></thead><tbody>

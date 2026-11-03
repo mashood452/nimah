@@ -12,12 +12,15 @@
     "db:check": "tsx scripts/db.ts check",
     "test:db": "tsx --test tests/database.test.ts",
     "test:auth": "tsx --test tests/auth.test.ts",
+    "test:email": "tsx --test tests/email.test.ts",
     "test:auth:integration": "tsx tests/auth-integration.ts",
-    "media:check": "tsx scripts/check-media.ts"
+    "media:check": "tsx scripts/check-media.ts",
+    "reminders:run": "node scripts/run-cart-reminders.mjs"
   },
   "dependencies": {
     "mysql2": "^3.24.6",
     "next": "16.4.4",
+    "nodemailer": "^10.3.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "server-only": "^0.0.1"
@@ -25,6 +28,7 @@
   "devDependencies": {
     "@next/env": "^16.4.4",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

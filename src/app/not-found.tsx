@@ -1,3 +1,4 @@
+import { CaptchaSearchForm } from "@/components/account/CaptchaSearchForm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { IconArrow } from "@/components/navbar/icons";
@@ -29,10 +30,7 @@ export default function NotFound() {
         collection.
       </p>
 
-      <form action="/search" method="get" role="search" className={nf.search}>
-        <input type="search" name="q" placeholder="Search sunglasses, blue-cut, frames" aria-label="Search products" />
-        <button type="submit">Search</button>
-      </form>
+      <CaptchaSearchForm className={nf.search} placeholder="Search eyewear" />
 
       <div className={nf.actions}>
         <Link href="/" className={styles.btnPrimary}>
