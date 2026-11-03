@@ -11,6 +11,8 @@
     "db:seed": "tsx scripts/db.ts seed",
     "db:check": "tsx scripts/db.ts check",
     "test:db": "tsx --test tests/database.test.ts",
+    "test:auth": "tsx --test tests/auth.test.ts",
+    "test:auth:integration": "tsx tests/auth-integration.ts",
     "media:check": "tsx scripts/check-media.ts"
   },
   "dependencies": {

@@ -43,6 +43,8 @@ Database-backed metadata resolves before response headers are sent. This keeps s
 |---|---|
 | `accounts` | Customer/admin identity, unique email and optional password hash |
 | `account_addresses` | Saved addresses belonging to an account |
+| `account_sessions` | Hashed, expiring customer-session tokens |
+| `auth_rate_limits` | Shared signup/login throttling counters |
 | `product_categories` | Product types, public names, stable codes/slugs and display order |
 | `product_shapes` | Frame shapes, public names and display order |
 | `products` | Catalog, price, collection tags, stock, thumbnail and SEO fields |
@@ -53,7 +55,9 @@ Database-backed metadata resolves before response headers are sent. This keeps s
 | `payments` | Payment provider references, amounts and state; no card data |
 | `schema_migrations` | Applied SQL filenames and checksums |
 
-Account, order and payment tables are prepared for the future account/checkout flows. The current site still saves its bag and wishlist in the browser and sends order enquiries to the team. This change does not add registration, sign-in, checkout, payment processing, or an admin dashboard. No default administrator or password is seeded.
+Customer sign-up, login and logout use `accounts` and the session tables introduced in migration `003_customer_auth.sql`. The bag and wishlist remain on the customer's device. Checkout, payment processing and an admin dashboard are not included. No default administrator or password is seeded.
+
+See [Customer accounts](AUTHENTICATION.md) for session behavior, security controls and end-to-end testing.
 
 ## Content columns
 

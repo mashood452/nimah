@@ -10,6 +10,7 @@ import { Navbar } from "@/components/navbar/Navbar";
 import { CartDrawer } from "@/components/shop/CartDrawer";
 import { ProductCatalogProvider } from "@/components/shop/ProductCatalogProvider";
 import { getProducts } from "@/lib/catalog";
+import { getCustomer } from "@/lib/auth/session";
 
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 
@@ -37,12 +38,12 @@ export const instant = false;
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   await connection();
-  const products = await getProducts();
+  const [products, customer] = await Promise.all([getProducts(), getCustomer()]);
   return (
     <html lang="en" className={manrope.variable}>
       <body>
         <ProductCatalogProvider products={products}>
-          <Navbar />
+          <Navbar accountName={customer?.name} />
           <CartDrawer />
           {children}
           <Footer />
