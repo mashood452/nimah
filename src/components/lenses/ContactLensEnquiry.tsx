@@ -12,7 +12,7 @@ import { DEFAULT_PHONE_COUNTRY, internationalPhone, phoneCountries } from "@/lib
 const MB = MAX_FILE_BYTES / 1024 / 1024;
 const ACCEPTED = /\.(jpe?g|png|webp|heic|heif|pdf)$/i;
 
-/** "Ask about contact lenses" button that opens a pop-up form: name, phone and up to three prescription files. */
+/** "Request a callback" button that opens a pop-up form: name, phone and up to three prescription files. */
 export function ContactLensEnquiry({ whatsappHref }: { whatsappHref?: string }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [open, setOpen] = useState(false);
@@ -29,7 +29,7 @@ export function ContactLensEnquiry({ whatsappHref }: { whatsappHref?: string }) 
   return (
     <>
       <button type="button" className={pageStyles.btnPrimary} onClick={() => setOpen(true)} aria-haspopup="dialog">
-        Ask about contact lenses <IconArrow />
+        Request a callback <IconArrow />
       </button>
       <dialog
         ref={dialog}
@@ -130,8 +130,8 @@ function EnquiryForm({ whatsappHref, onClose }: { whatsappHref?: string; onClose
       ) : (
         <>
           <p className={pageStyles.eyebrow}>Contact lenses</p>
-          <h2 id="cle-title" className={styles.title}>Ask about contact lenses</h2>
-          <p className={styles.intro}>Leave your details and, if you have one, your prescription. Our team will get back to you.</p>
+          <h2 id="cle-title" className={styles.title}>Request a callback</h2>
+          <p className={styles.intro}>Leave your name and number and, if you have one, your prescription. Our team will call you back about contact lenses.</p>
 
           <form className={pageStyles.form} onSubmit={onSubmit} noValidate>
             <div className={pageStyles.field}>

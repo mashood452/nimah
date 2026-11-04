@@ -850,8 +850,10 @@
 }
 
 @media (max-width: 900px) {
+  /* !important: pages set --cols inline (e.g. 4 on the contact lenses page), which would otherwise win here
+     and squeeze four columns onto a phone, pushing the page wider than the screen */
   .linkCards {
-    --cols: 1;
+    --cols: 1 !important;
   }
   .glance {
     padding: 26px 22px;

@@ -56,6 +56,15 @@ main {
   min-height: 100svh;
 }
 
+/*
+ * Google's floating reCAPTCHA badge sat under the floating WhatsApp button. It is hidden with visibility (Google's
+ * documented method; display: none can stop the check from working), and every protected form still shows the
+ * required "Protected by reCAPTCHA" notice with Google's Privacy Policy and Terms links.
+ */
+.grecaptcha-badge {
+  visibility: hidden !important;
+}
+
 a {
   color: inherit;
   text-decoration: none;
