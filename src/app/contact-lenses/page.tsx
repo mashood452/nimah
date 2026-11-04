@@ -7,7 +7,8 @@ import { FaqList } from "@/components/page/FaqList";
 import { Breadcrumbs, CtaBand, SectionHead } from "@/components/page/PageKit";
 import pageStyles from "@/components/page/Page.module.css";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { IconArrow } from "@/components/navbar/icons";
+import { IconWhatsapp } from "@/components/footer/social-icons";
+import { ContactLensEnquiry } from "@/components/lenses/ContactLensEnquiry";
 import styles from "@/components/lenses/ContactLenses.module.css";
 import { comparisons, faqs, fittingSteps, IMAGE_FOLDER, lensTypes, safetyTips } from "@/lib/contact-lenses";
 import { pageImage } from "@/lib/page-images";
@@ -78,12 +79,10 @@ export default function ContactLensesPage() {
               a fitting, how to wear lenses safely, and ask our team about the next steps.
             </p>
             <div className={styles.heroActions}>
-              <Link href="/contact" className={pageStyles.btnPrimary}>
-                Ask about contact lenses <IconArrow />
-              </Link>
+              <ContactLensEnquiry whatsappHref={whatsappHref || undefined} />
               {whatsappHref && (
                 <a href={whatsappHref} className={pageStyles.btnGhost} target="_blank" rel="noopener noreferrer">
-                  WhatsApp us
+                  <IconWhatsapp /> WhatsApp us
                 </a>
               )}
             </div>

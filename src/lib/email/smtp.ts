@@ -26,11 +26,14 @@ export function senderAddress(env: Record<string, string | undefined> = process.
   return from;
 }
 
-export async function sendEmail(message: { to: string; subject: string; html: string; text: string; headers?: Record<string, string> }) {
+export type EmailAttachment = { filename: string; content: Buffer; contentType: string };
+
+export async function sendEmail(message: { to: string; subject: string; html: string; text: string; headers?: Record<string, string>; attachments?: EmailAttachment[] }) {
   if (!normalizeEmail(message.to) || /[\r\n]/.test(message.subject)) throw new Error("Invalid email envelope.");
   const from = senderAddress();
   transporter ??= nodemailer.createTransport(smtpOptions());
   logo ??= readFile(path.join(process.cwd(), "public", "brand", "nimah-logo.png"));
-  const result = await transporter.sendMail({ ...message, from, attachments: [{ filename: "nimah-logo.png", content: await logo, cid: "nimah-logo", contentType: "image/png" }] });
+  const { attachments = [], ...rest } = message;
+  const result = await transporter.sendMail({ ...rest, from, attachments: [{ filename: "nimah-logo.png", content: await logo, cid: "nimah-logo", contentType: "image/png" }, ...attachments] });
   if (!result.accepted?.length) throw new Error("SMTP did not accept the recipient.");
 }

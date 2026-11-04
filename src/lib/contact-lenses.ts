@@ -117,7 +117,7 @@ export const comparisons = [
     before: { image: "clarity-before", label: "Without correction", alt: "Everyday street scene blurred, as seen without vision correction" },
     after: { image: "clarity-after", label: "With contact lenses", alt: "The same street scene, sharp and clear with contact lenses" },
     art: "chart" as const,
-    blur: 12,
+    blur: 6,
   },
   {
     key: "active",
@@ -126,7 +126,7 @@ export const comparisons = [
     before: { image: "active-before", label: "Without correction", alt: "Outdoor activity scene blurred, as seen without vision correction" },
     after: { image: "active-after", label: "With contact lenses", alt: "The same outdoor scene, sharp and clear with contact lenses" },
     art: "chart" as const,
-    blur: 12,
+    blur: 6,
   },
 ];
 

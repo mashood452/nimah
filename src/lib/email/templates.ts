@@ -73,6 +73,21 @@ export function newOrderNoticeEmail(order: OrderEmailData) {
   };
 }
 
+/** Sent to the team when a visitor asks about contact lenses from the contact lenses page. Prescriptions are attached. */
+export function contactLensEnquiryEmail(enquiry: { name: string; phone: string; country: string; files: string[] }) {
+  const subject = `Contact lens enquiry from ${enquiry.name.replace(/[\r\n]+/g, " ")}`;
+  const whatsapp = `https://wa.me/${enquiry.phone.replace(/\D/g, "")}`;
+  const filesText = enquiry.files.length ? enquiry.files.map((f) => `- ${f}`).join("\n") : "No prescription uploaded.";
+  const text = `New contact lens enquiry from the website.\n\nName: ${enquiry.name}\nPhone: ${enquiry.phone} (${enquiry.country})\nWhatsApp: ${whatsapp}\n\nPrescriptions attached:\n${filesText}`;
+  const filesHtml = enquiry.files.length
+    ? `<ul style="margin:8px 0 0;padding-left:20px;line-height:1.8">${enquiry.files.map((f) => `<li>${escapeHtml(f)}</li>`).join("")}</ul>`
+    : `<p style="margin:8px 0 0;color:#6e6466">No prescription uploaded.</p>`;
+  return {
+    subject, text,
+    html: shell(subject, `<h1 style="margin:0 0 16px;font-size:26px;font-weight:500">New contact lens enquiry</h1><p style="line-height:1.8;color:#6e6466"><strong style="color:#1f1a1b">${escapeHtml(enquiry.name)}</strong><br><a href="tel:${escapeHtml(enquiry.phone)}" style="color:#3c252a">${escapeHtml(enquiry.phone)}</a> (${escapeHtml(enquiry.country)})<br><a href="${escapeHtml(whatsapp)}" style="color:#3c252a">Reply on WhatsApp</a></p><div style="margin:24px 0;padding:20px;background:#f7f2f3;font-size:14px;line-height:1.8"><strong>Prescriptions attached</strong>${filesHtml}</div>`, "Sent automatically from the contact lenses page."),
+  };
+}
+
 /** Sent to the old address after the account email changes. */
 export function emailChangedEmail(name: string, newEmail: string) {
   const subject = "Your Nimah email address was changed";

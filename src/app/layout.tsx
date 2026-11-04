@@ -6,6 +6,7 @@ import "./globals.css";
 import { siteConfig } from "@/lib/site";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { Footer } from "@/components/footer/Footer";
+import { FloatingContact } from "@/components/contact/FloatingContact";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { RouteLoading } from "@/components/motion/RouteLoading";
 import { Navbar } from "@/components/navbar/Navbar";
@@ -65,6 +66,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <span id="main" tabIndex={-1} />
           {children}
           <Footer />
+          <FloatingContact />
           <RevealOnScroll />
           <GoogleAnalytics />
         </ProductCatalogProvider>
