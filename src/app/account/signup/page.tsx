@@ -6,7 +6,9 @@ import { getCustomer } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Create an Account", description: "Create your personal Nimah Opticals account.", robots: { index: false, follow: true } };
 
-export default async function SignupPage() {
-  if (await getCustomer()) redirect("/account");
-  return <AuthLayout signup><AuthForm mode="signup" /></AuthLayout>;
+export default async function SignupPage({ searchParams }: PageProps<"/account/signup">) {
+  const params = await searchParams;
+  const destination = params.next === "/cart" || params.next === "/checkout" ? params.next : "/account";
+  if (await getCustomer()) redirect(destination);
+  return <AuthLayout signup><AuthForm mode="signup" destination={destination} /></AuthLayout>;
 }

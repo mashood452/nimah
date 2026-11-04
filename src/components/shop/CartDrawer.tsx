@@ -162,9 +162,9 @@ export function CartDrawer() {
             <p className={styles.subtotal}>
               Subtotal <strong><Price amount={subtotal} /></strong>
             </p>
-            <p className={styles.note}>Delivery and payment are confirmed with our team when you place your order.</p>
-            <Link href="/contact" className={styles.primary}>
-              Contact us to order <IconArrow />
+            <p className={styles.note}>Free delivery across the UAE. Pay in cash when your order arrives.</p>
+            <Link href="/checkout" className={styles.primary} onClick={hide}>
+              Checkout <IconArrow />
             </Link>
             <Link href="/cart" className={styles.ghost}>
               View full bag

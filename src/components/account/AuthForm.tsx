@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { IconArrow } from "../navbar/icons";
+import { OtpInput } from "./OtpInput";
 import { Recaptcha, useRecaptcha } from "./Recaptcha";
 import styles from "./Account.module.css";
 
@@ -23,7 +24,7 @@ function PasswordField({ id, label, error, signup }: { id: string; label: string
   </div>;
 }
 
-export function AuthForm({ mode, destination = "/account" }: { mode: "login" | "signup"; destination?: "/account" | "/cart" }) {
+export function AuthForm({ mode, destination = "/account" }: { mode: "login" | "signup"; destination?: "/account" | "/cart" | "/checkout" }) {
   const signup = mode === "signup";
   const [phase, setPhase] = useState<Phase>(signup ? "email" : "login");
   const [email, setEmail] = useState("");
@@ -34,6 +35,8 @@ export function AuthForm({ mode, destination = "/account" }: { mode: "login" | "
   const [errors, setErrors] = useState<Errors>({});
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState("");
+  // changing this clears the code boxes, after a wrong code or when a new code is sent
+  const [codeKey, setCodeKey] = useState(0);
   const errorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,7 +60,7 @@ export function AuthForm({ mode, destination = "/account" }: { mode: "login" | "
   async function sendCode() {
     const captchaToken = await executeCaptcha("otp_request");
     const result = await api("/api/auth/otp/request", { email, captchaToken });
-    if (result) { setEmail(result.email); setChallenge(result.challengeId); setCooldown(result.resendAfter); setPhase("code"); }
+    if (result) { setEmail(result.email); setChallenge(result.challengeId); setCooldown(result.resendAfter); setCodeKey((k) => k + 1); setPhase("code"); }
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -68,8 +71,10 @@ export function AuthForm({ mode, destination = "/account" }: { mode: "login" | "
     try {
       if (phase === "email") { await sendCode(); return; }
       if (phase === "code") {
+        if (!/^\d{6}$/.test(String(data.get("code") ?? ""))) { setErrors({ code: "Enter all six digits." }); return; }
         const captchaToken = await executeCaptcha("otp_verify");
         const result = await api("/api/auth/otp/verify", { challengeId: challenge, code: data.get("code"), captchaToken });
+        if (!result) setCodeKey((k) => k + 1);
         if (result) { setPhase(signup ? "details" : "login"); setSuccess(signup ? "Email verified. Complete your account below." : "Email verified. Enter your password to log in."); }
         return;
       }
@@ -100,7 +105,7 @@ export function AuthForm({ mode, destination = "/account" }: { mode: "login" | "
     {success && <p className={styles.success} role="status">{success}</p>}
     {phase === "code" ? <>
       <p className={styles.verification}>Enter the six-digit code sent to <strong>{email}</strong>. It expires in ten minutes.</p>
-      <div className={styles.field}><label htmlFor="code">Verification code</label><input className={styles.codeInput} id="code" name="code" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} minLength={6} required aria-invalid={!!errors.code} aria-describedby={errors.code ? "code-error" : undefined} />{errors.code && <span id="code-error" className={styles.fieldError}>{errors.code}</span>}</div>
+      <OtpInput key={codeKey} error={errors.code} disabled={pending} />
     </> : <>
       {phase === "details" && <div className={styles.field}><label htmlFor="name">Full name</label><input id="name" name="name" autoComplete="name" required minLength={2} maxLength={160} aria-invalid={!!errors.name} aria-describedby={errors.name ? "name-error" : undefined} />{errors.name && <span id="name-error" className={styles.fieldError}>{errors.name}</span>}</div>}
       <div className={styles.field}><label htmlFor="email">Email address</label><input id="email" name="email" type="email" autoComplete="email" autoCapitalize="none" spellCheck={false} inputMode="email" required maxLength={254} value={email} readOnly={phase === "details"} onChange={(event) => setEmail(event.target.value)} aria-invalid={!!errors.email} aria-describedby={errors.email ? "email-error" : undefined} />{phase === "details" && <span className={styles.verified}>✓ Email verified</span>}{errors.email && <span id="email-error" className={styles.fieldError}>{errors.email}</span>}</div>
@@ -119,7 +124,7 @@ export function AuthForm({ mode, destination = "/account" }: { mode: "login" | "
       <button className={styles.textButton} type="button" disabled={pending || cooldown > 0 || !captchaReady} onClick={() => void resendCode()}>{cooldown > 0 ? `Resend available in ${cooldown}s` : "Send a new code"}</button>
       <button className={styles.textButton} type="button" disabled={pending} onClick={() => { setPhase("email"); setMessage(""); }}>Use a different email</button>
     </>}
-    <p className={styles.switch}>{signup ? "Already have an account?" : "New to Nimah?"} <Link href={signup ? "/account/login" : "/account/signup"}>{signup ? "Log in" : "Create an account"}</Link></p>
+    <p className={styles.switch}>{signup ? "Already have an account?" : "New to Nimah?"} <Link href={`${signup ? "/account/login" : "/account/signup"}${destination === "/account" ? "" : `?next=${destination}`}`}>{signup ? "Log in" : "Create an account"}</Link></p>
     {!signup && <p className={styles.help}>Need a hand? <Link href="/contact">Contact our team</Link>.</p>}
     <noscript><p>Please enable JavaScript to use the secure account form.</p></noscript>
   </form>;

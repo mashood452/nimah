@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Log In", description: "Welcome back 
 
 export default async function LoginPage({ searchParams }: PageProps<"/account/login">) {
   const params = await searchParams;
-  const destination = params.next === "/cart" ? "/cart" : "/account";
+  const destination = params.next === "/cart" || params.next === "/checkout" ? params.next : "/account";
   if (await getCustomer()) redirect(destination);
   return <AuthLayout>
     {params.signedOut === "1" && <p className={styles.success} role="status">You have been logged out safely. See you again soon.</p>}

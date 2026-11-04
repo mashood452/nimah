@@ -27,3 +27,58 @@ export function cartEmail(name: string, items: CartEmailItem[], siteUrl: string,
     headers: { "List-Unsubscribe": `<${new URL(`/api/email/unsubscribe?token=${encodeURIComponent(unsubscribe)}`, base).href}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" },
   };
 }
+
+export type OrderEmailData = {
+  number: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  address: { recipient: string; phone: string; line1: string; line2: string; city: string; region: string };
+  items: { name: string; color: string; qty: number; unitPrice: number; lineTotal: number }[];
+  subtotal: number;
+  shipping: number;
+  total: number;
+  notes: string;
+};
+
+const aed = (amount: number) => new Intl.NumberFormat("en-AE", { style: "currency", currency: "AED" }).format(amount);
+const addressText = (a: OrderEmailData["address"]) => [a.recipient, a.line1, a.line2, `${a.city}, ${a.region}`, a.phone].filter(Boolean).join("\n");
+
+function orderTable(order: OrderEmailData) {
+  const rows = order.items.map((item) => `<tr><td style="padding:14px 0;border-bottom:1px solid #eadfe1"><strong>${escapeHtml(item.name)}</strong><br><span style="font-size:12px;color:#6e6466">${escapeHtml(item.color)} · Qty ${item.qty}</span></td><td align="right" style="padding:14px 0;border-bottom:1px solid #eadfe1;white-space:nowrap">${aed(item.lineTotal)}</td></tr>`).join("");
+  const line = (label: string, value: string, bold = false) => `<tr><td style="padding:6px 0;color:#6e6466">${label}</td><td align="right" style="padding:6px 0;${bold ? "font-weight:bold;color:#3c252a" : ""}">${value}</td></tr>`;
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows}${line("Subtotal", aed(order.subtotal))}${line("Delivery", order.shipping > 0 ? aed(order.shipping) : "Free")}${line("Total to pay on delivery", aed(order.total), true)}</table>`;
+}
+
+/** Confirmation sent to the customer when an order is placed. */
+export function orderConfirmationEmail(order: OrderEmailData, siteUrl: string) {
+  const link = new URL(`/account/orders/${encodeURIComponent(order.number)}`, siteUrl).href;
+  const subject = `Your Nimah order ${order.number}`;
+  const itemsText = order.items.map((item) => `${item.qty} x ${item.name} (${item.color}): ${aed(item.lineTotal)}`).join("\n");
+  return {
+    subject,
+    text: `Hi ${order.customerName},\n\nThank you for your order ${order.number}.\n\n${itemsText}\nSubtotal: ${aed(order.subtotal)}\nDelivery: ${order.shipping > 0 ? aed(order.shipping) : "Free"}\nTotal to pay on delivery: ${aed(order.total)}\n\nDelivering to:\n${addressText(order.address)}\n\nPayment: cash on delivery. Our team will be in touch to confirm your delivery.\nView your order: ${link}`,
+    html: shell(subject, `<h1 style="margin:0 0 12px;font-size:30px;font-weight:500">Thank you, ${escapeHtml(order.customerName.split(" ")[0])}.</h1><p style="color:#6e6466;line-height:1.8">We have your order <strong style="color:#3c252a">${escapeHtml(order.number)}</strong>. Our team will be in touch to confirm your delivery.</p>${orderTable(order)}<div style="margin:28px 0;padding:20px;background:#f7f2f3;font-size:14px;line-height:1.8"><strong>Delivering to</strong><br>${escapeHtml(addressText(order.address)).replace(/\n/g, "<br>")}</div><p style="color:#6e6466;font-size:14px;line-height:1.8">Payment is <strong>cash on delivery</strong>. Please have the exact amount ready if you can.</p><a href="${escapeHtml(link)}" style="display:block;padding:18px 24px;background:#3c252a;color:#fff;text-align:center;text-decoration:none;font-size:14px">View your order →</a>`),
+  };
+}
+
+/** Heads-up for the Nimah team, so a new order never waits unseen in the database. */
+export function newOrderNoticeEmail(order: OrderEmailData) {
+  const subject = `New order ${order.number} (${aed(order.total)})`;
+  const itemsText = order.items.map((item) => `${item.qty} x ${item.name} (${item.color}): ${aed(item.lineTotal)}`).join("\n");
+  const text = `New online order ${order.number}\n\nCustomer: ${order.customerName}\nEmail: ${order.customerEmail}\nPhone: ${order.customerPhone}\n\n${itemsText}\nDelivery: ${order.shipping > 0 ? aed(order.shipping) : "Free"}\nTotal (cash on delivery): ${aed(order.total)}\n\nDeliver to:\n${addressText(order.address)}${order.notes ? `\n\nCustomer notes: ${order.notes}` : ""}`;
+  return {
+    subject, text,
+    html: shell(subject, `<h1 style="margin:0 0 16px;font-size:26px;font-weight:500">New order ${escapeHtml(order.number)}</h1><p style="line-height:1.8;color:#6e6466"><strong style="color:#1f1a1b">${escapeHtml(order.customerName)}</strong><br>${escapeHtml(order.customerEmail)}<br>${escapeHtml(order.customerPhone)}</p>${orderTable(order)}<div style="margin:24px 0;padding:20px;background:#f7f2f3;font-size:14px;line-height:1.8"><strong>Deliver to</strong><br>${escapeHtml(addressText(order.address)).replace(/\n/g, "<br>")}</div>${order.notes ? `<p style="font-size:14px;line-height:1.8"><strong>Customer notes:</strong> ${escapeHtml(order.notes)}</p>` : ""}`, "Sent automatically when an order is placed on the website."),
+  };
+}
+
+/** Sent to the old address after the account email changes. */
+export function emailChangedEmail(name: string, newEmail: string) {
+  const subject = "Your Nimah email address was changed";
+  return {
+    subject,
+    text: `Hi ${name},\n\nThe email address on your Nimah Opticals account was changed to ${newEmail}. If this was you, no action is needed.\n\nIf it was not you, contact us straight away so we can secure your account.`,
+    html: shell(subject, `<h1 style="margin:0 0 20px;font-size:28px;font-weight:500">Your email address was changed.</h1><p style="color:#6e6466;line-height:1.8">Hi ${escapeHtml(name)}, the email address on your Nimah account was changed to <strong style="color:#3c252a">${escapeHtml(newEmail)}</strong>.</p><p style="color:#6e6466;line-height:1.8">If this was you, there is nothing more to do. If it was not you, please contact us straight away so we can secure your account.</p>`),
+  };
+}

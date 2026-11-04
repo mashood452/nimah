@@ -10,7 +10,8 @@
   flex: none;
   width: auto;
   height: 0.72em;
-  color: var(--nm-accent);
+  /* brand brown by default; a dark button can set --dirham-color: currentColor to turn it white */
+  color: var(--dirham-color, var(--nm-accent));
 }
 .amount {
   font-variant-numeric: tabular-nums;

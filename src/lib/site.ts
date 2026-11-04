@@ -35,6 +35,11 @@ export const siteConfig = {
     /** shown in the policies as "Last updated" */
     lastUpdated: "3 November 2026",
   },
+  /** Online checkout. */
+  checkout: {
+    /** AED added to every order for delivery. 0 means delivery is free. */
+    deliveryFee: 0,
+  },
   policies: {
     /** days a customer has to return an unworn, unused item */
     returnWindowDays: 14,

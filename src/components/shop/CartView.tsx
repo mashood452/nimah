@@ -2,8 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { formatPrice } from "@/lib/format";
 import { Price } from "../ui/Price";
 import { mediaUrl } from "@/lib/media";
 import { useProducts } from "./ProductCatalogProvider";
@@ -18,7 +16,6 @@ import styles from "./Shop.module.css";
 export function CartView() {
   const products = useProducts();
   const { lines, count, setQty, remove, clear, maxQty } = useCart();
-  const [copied, setCopied] = useState(false);
 
   const rows = lines.flatMap((line) => {
     const product = products.find((product) => product.slug === line.slug);
@@ -38,24 +35,6 @@ export function CartView() {
       />
     );
   }
-
-  const summaryText = [
-    "Nimah Opticals order request",
-    ...rows.map(
-      (r) => `${r.line.qty} x ${r.product.name} (${r.product.subtitle}), ${r.line.color}: ${formatPrice(r.product.price * r.line.qty)}`,
-    ),
-    `Subtotal: ${formatPrice(subtotal)}`,
-  ].join("\n");
-
-  const copySummary = async () => {
-    try {
-      await navigator.clipboard.writeText(summaryText);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-    } catch {
-      /* clipboard blocked: the summary is still visible on the page */
-    }
-  };
 
   return (
     <div className={styles.cart}>
@@ -128,16 +107,15 @@ export function CartView() {
           Subtotal <strong><Price amount={subtotal} /></strong>
         </p>
         <p className={styles.summaryNote}>
-          Online checkout is coming soon. Send us your bag and our team will complete your order with you, including
-          delivery and payment.
+          Free delivery across the UAE. Pay in cash when your order arrives.
         </p>
         <div className={styles.summaryActions}>
-          <Link href="/contact" className={pageStyles.btnPrimary}>
-            Contact us to order <IconArrow />
+          <Link href="/checkout" className={pageStyles.btnPrimary}>
+            Checkout <IconArrow />
           </Link>
-          <button type="button" className={pageStyles.btnGhost} onClick={copySummary}>
-            {copied ? "Order summary copied" : "Copy order summary"}
-          </button>
+          <Link href="/shop" className={pageStyles.btnGhost}>
+            Continue shopping
+          </Link>
           <button type="button" className={styles.linkBtn} style={{ justifySelf: "center", marginTop: 8 }} onClick={clear}>
             Empty bag
           </button>

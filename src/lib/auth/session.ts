@@ -40,10 +40,17 @@ export const getCustomer = cache(async (): Promise<Customer | null> => {
   return row ? { id: String(row.id), name: String(row.display_name), email: String(row.email), phone: row.phone == null ? null : String(row.phone), joinedAt: String(row.created_at).replace(" ", "T") + "Z", cartReminders: !!row.cart_reminders_enabled } : null;
 });
 
-export async function requireCustomer() {
+/** Returns the signed-in customer, or sends the visitor to log in and then back to `next`. */
+export async function requireCustomer(next?: "/checkout" | "/cart") {
   const customer = await getCustomer();
-  if (!customer) redirect("/account/login");
+  if (!customer) redirect(next ? `/account/login?next=${next}` : "/account/login");
   return customer;
+}
+
+/** Hash of this browser's session token, used to keep this session while ending the others. */
+export async function currentSessionHash() {
+  const token = (await cookies()).get(SESSION_COOKIE)?.value;
+  return token && validSessionToken(token) ? tokenHash(token) : null;
 }
 
 export async function revokeCurrentSession() {

@@ -66,3 +66,23 @@ Product structured data is deliberately not added yet, because prices are placeh
   tells visitors the form is being set up.
 - Routes with dynamic segments set `export const instant = false` so that unknown URLs return a real 404.
 - Google Analytics loads on every page. Consider a consent banner before launch.
+
+## Accounts and checkout
+
+Customers sign up with an email code, then manage everything under `/account`:
+
+| Page | What it does |
+| --- | --- |
+| `/account` | Overview: details, default address, recent orders |
+| `/account/profile` | Change name, mobile number and email (a new email is verified with a six-digit code and confirmed with the password) |
+| `/account/addresses` | Save, edit, remove and choose the default delivery address (UAE emirates) |
+| `/account/orders` and `/account/orders/NIM-…` | Order history, status and details |
+| `/checkout` | Pick an address, review the order and place it. Needs a login and sends visitors back here after signing in |
+
+Orders are priced from the database on the server (never from the browser), stock is checked and reduced, and placing the same order twice is safe. Payment is **cash on delivery** for now. Each order creates a pending payment record (`payments` table), and the customer and the team (`siteConfig.contact.email`) get an email.
+
+* Delivery fee: `siteConfig.checkout.deliveryFee` in `src/lib/site.ts` (0 means free).
+* Stock: set `products.stock_quantity` in MySQL to limit a product. Leave it empty for unlimited.
+* Order status: change `orders.status` in MySQL (`pending`, `confirmed`, `processing`, `shipped`, `delivered`, `cancelled`, `refunded`) and customers see it on their order page.
+* New database columns for this live in `database/migrations/005_checkout.sql`. Run `npm run db:migrate` on any other database.
+* Tests: `npx tsx --test tests/account.test.ts` covers phone and address validation.
