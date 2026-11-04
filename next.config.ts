@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { PHASE_PRODUCTION_BUILD } from "next/constants";
 
 /**
  * Product and blog photos can be served from a public storage bucket (Cloudflare R2). When
@@ -61,4 +62,16 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+/**
+ * Shared hosting limits how many threads one account may start. By default `next build` starts one worker per CPU
+ * core of the build machine, and each worker starts a thread pool of the same size, which on a many-core host can
+ * exceed the limit ("OS can't spawn worker thread"). Only the production build is limited, so `next dev` stays fast.
+ * Raise these numbers if your build host allows more.
+ */
+const BUILD_WORKERS = 2;
+
+export default function config(phase: string): NextConfig {
+  if (phase !== PHASE_PRODUCTION_BUILD) return nextConfig;
+  process.env.TOKIO_WORKER_THREADS ??= String(BUILD_WORKERS);
+  return { ...nextConfig, experimental: { ...nextConfig.experimental, cpus: BUILD_WORKERS } };
+}
