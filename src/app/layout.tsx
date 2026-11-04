@@ -64,7 +64,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <CartDrawer />
           <RouteLoading />
           <span id="main" tabIndex={-1} />
-          {children}
+          <div className="page-frame">{children}</div>
           <Footer />
           <FloatingContact />
           <RevealOnScroll />

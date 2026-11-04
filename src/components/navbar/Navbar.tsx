@@ -186,7 +186,7 @@ export function Navbar({ accountName }: { accountName?: string }) {
               >
                 <IconSearch />
               </button>
-              <Link href="/account" className={`${styles.iconBtn} ${styles.deskOnly}`} aria-label={accountName ? `Your account, ${accountName}` : "Log in or create an account"} title={accountName ? `Signed in as ${accountName}` : "Log in or create an account"}>
+              <Link href={accountName ? "/account" : "/account/login"} className={`${styles.iconBtn} ${styles.deskOnly}`} aria-label={accountName ? `Your account, ${accountName}` : "Log in or create an account"} title={accountName ? `Signed in as ${accountName}` : "Log in or create an account"}>
                 <IconUser />
               </Link>
               <Link
@@ -364,7 +364,7 @@ export function Navbar({ accountName }: { accountName?: string }) {
         </nav>
 
         <div className={styles.drawerFoot}>
-          <Link href="/account" onClick={closeAll}>
+          <Link href={accountName ? "/account" : "/account/login"} onClick={closeAll}>
             <IconUser /> {accountName ? "Your account" : "Log in / Sign up"}
           </Link>
           <Link href="/wishlist" onClick={closeAll}>

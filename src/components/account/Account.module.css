@@ -1,7 +1,11 @@
 .authPage { background: var(--nm-surface); padding: 56px var(--gutter) 80px; }
-.authGrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); max-width: 1280px; margin: 0 auto; background: #fff; border: 1px solid var(--nm-line); }
-.story { position: relative; min-height: 740px; color: #fff; background: var(--nm-accent); overflow: hidden; }
-.story > img { object-fit: cover; object-position: center; }
+.authGrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); max-width: 1280px; margin: 0 auto; background: #fff; border: 1px solid var(--nm-line); container-type: inline-size; }
+/*
+ * The photos are portrait 2:3. The panel is always at least 1.5x as tall as it is wide (75cqw = half the grid x 1.5),
+ * so "cover" can only ever trim the sides when the form is taller, never the top or bottom of the picture.
+ */
+.story { position: relative; min-height: calc(75cqw + 2px); color: #fff; background: var(--nm-accent); overflow: hidden; }
+.story > img { object-fit: cover; object-position: center top; }
 .story::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(31, 26, 27, .08) 25%, rgba(31, 26, 27, .83)); }
 .storyContent { position: absolute; z-index: 1; bottom: 56px; left: 48px; right: 40px; }
 .eyebrow { display: block; margin: 0 0 20px; font-size: 11px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; }
@@ -78,12 +82,12 @@
 @media (max-width: 900px) {
   .authPage { padding: 28px var(--gutter) 48px; }
   .authGrid { grid-template-columns: minmax(0, 1fr); max-width: 600px; }
-  .story { min-height: 260px; }
+  /* one column: the form comes first, and the whole photo (full width x 1.5) sits below it, uncropped */
+  .story { order: 2; min-height: calc(150cqw + 2px); }
   .storyContent { left: 28px; bottom: 28px; }
   .story h2 { font-size: 38px; margin-bottom: 12px; }
   .story .eyebrow { margin-bottom: 12px; }
   .story p, .story a { display: none; }
-  .story > img { object-position: center 35%; }
   .formPanel { padding: 28px; }
   .breadcrumb { margin-bottom: 32px; }
   .summary { grid-template-columns: minmax(0, 1fr); gap: 24px; }
@@ -94,7 +98,6 @@
 @media (max-width: 480px) {
   .authPage { padding: 0 0 40px; }
   .authGrid { border-left: 0; border-right: 0; }
-  .story { min-height: 210px; }
   .formPanel { padding: 28px 22px 32px; }
   .formPanel h1 { font-size: 34px; }
   .dashboard { padding-top: 32px; }

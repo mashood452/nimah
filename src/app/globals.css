@@ -48,6 +48,14 @@ main {
   container-type: inline-size;
 }
 
+/*
+ * Every page renders inside this frame. It is always at least one screen tall, so while a page is still loading
+ * (or redirecting, for example to the log in page) the footer can never jump up under the navigation.
+ */
+.page-frame {
+  min-height: 100svh;
+}
+
 a {
   color: inherit;
   text-decoration: none;
