@@ -35,6 +35,12 @@ export const siteConfig = {
     /** shown in the policies as "Last updated" */
     lastUpdated: "3 November 2026",
   },
+  /** The website builder, credited in the footer. Set `url` to an empty string to show the name without a link. */
+  credit: {
+    name: "Digitronix.io",
+    legalName: "Advanced Digital Technology Solutions LLC FZ",
+    url: "https://digitronix.io",
+  },
   /** Online checkout. */
   checkout: {
     /** AED added to every order for delivery. 0 means delivery is free. */

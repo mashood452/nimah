@@ -102,9 +102,21 @@ export function Footer() {
       </div>
 
       <div className={styles.bar} data-reveal suppressHydrationWarning>
-        <p className={styles.copy}>
-          &copy; <Year /> {siteConfig.name}. All rights reserved.
-        </p>
+        <div className={styles.barLeft}>
+          <p className={styles.copy}>
+            &copy; <Year /> {siteConfig.name}. All rights reserved.
+          </p>
+          <p className={styles.credit}>
+            Built by{" "}
+            {siteConfig.credit.url ? (
+              <a href={siteConfig.credit.url} target="_blank" rel="noopener noreferrer" title={siteConfig.credit.legalName}>
+                {siteConfig.credit.name}
+              </a>
+            ) : (
+              <span title={siteConfig.credit.legalName}>{siteConfig.credit.name}</span>
+            )}
+          </p>
+        </div>
         <ul className={styles.legal}>
           {legalLinks.map((l) => (
             <li key={l.label}>
