@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import { PHASE_PRODUCTION_BUILD } from "next/constants";
 
 /**
  * Product and blog photos can be served from a public storage bucket (Cloudflare R2). When
@@ -25,10 +24,20 @@ function mediaImagePatterns() {
   }
 }
 
+/**
+ * Shared hosting limits how many threads one account may start. By default `next build` starts one worker per CPU
+ * core of the build machine, and each worker starts a thread pool of the same size, which on a many-core host can
+ * exceed the limit ("OS can't spawn worker thread"). So production builds use a few workers, with a small thread pool
+ * each. `next dev` (NODE_ENV=development) is left alone. Raise this if your build host allows more.
+ */
+const BUILD_WORKERS = 2;
+if (process.env.NODE_ENV === "production") process.env.TOKIO_WORKER_THREADS ??= String(BUILD_WORKERS);
+
 const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  experimental: { cpus: BUILD_WORKERS },
   serverExternalPackages: ["nodemailer"],
   // Resolve database-backed metadata before headers are sent, including missing-slug 404s.
   htmlLimitedBots: /.*/,
@@ -62,16 +71,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-/**
- * Shared hosting limits how many threads one account may start. By default `next build` starts one worker per CPU
- * core of the build machine, and each worker starts a thread pool of the same size, which on a many-core host can
- * exceed the limit ("OS can't spawn worker thread"). Only the production build is limited, so `next dev` stays fast.
- * Raise these numbers if your build host allows more.
- */
-const BUILD_WORKERS = 2;
-
-export default function config(phase: string): NextConfig {
-  if (phase !== PHASE_PRODUCTION_BUILD) return nextConfig;
-  process.env.TOKIO_WORKER_THREADS ??= String(BUILD_WORKERS);
-  return { ...nextConfig, experimental: { ...nextConfig.experimental, cpus: BUILD_WORKERS } };
-}
+export default nextConfig;
