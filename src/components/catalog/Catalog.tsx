@@ -8,6 +8,7 @@ import { Brands } from "../brands/Brands";
 import { IconArrow } from "../navbar/icons";
 import type { Product } from "../products/products-data";
 import { JsonLd } from "../seo/JsonLd";
+import { ProductGridSkeleton } from "../ui/Skeleton";
 import { CatalogGrid, FilterableCatalogGrid } from "./CatalogGrid";
 import styles from "./Catalog.module.css";
 
@@ -130,7 +131,7 @@ export function Catalog({
 
       <section className={styles.results} aria-label={`${title} products`}>
         {filterTaxonomy ? (
-          <Suspense fallback={<p aria-busy="true">Loading eyewear...</p>}>
+          <Suspense fallback={<ProductGridSkeleton />}>
             <FilteredResults products={products} taxonomy={filterTaxonomy} query={filterQuery} />
           </Suspense>
         ) : products.length === 0 ? (

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { SearchView } from "@/components/shop/SearchView";
 import { ShopFrame } from "@/components/shop/ShopFrame";
+import { ProductGridSkeleton } from "@/components/ui/Skeleton";
 
 export const metadata: Metadata = {
   title: "Search",
@@ -20,7 +21,7 @@ export default function SearchPage() {
       ]}
     >
       {/* the query is read in the browser, so it sits behind a Suspense boundary */}
-      <Suspense fallback={<p aria-busy="true">Loading search</p>}>
+      <Suspense fallback={<ProductGridSkeleton count={4} toolbar={false} />}>
         <SearchView />
       </Suspense>
     </ShopFrame>

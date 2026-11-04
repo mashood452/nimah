@@ -1,0 +1,23 @@
+/*
+ * Sits over the page content, under the navigation bar (which is z-index 50), and starts below it, so the header
+ * stays put while the skeleton stands in for the page that is loading.
+ */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  padding-top: 141px; /* the header's height: announcement strip plus the bar */
+  overflow: hidden;
+  background: #ffffff;
+  animation: appear 0.18s ease-out both;
+}
+@keyframes appear {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (max-width: 1179px) {
+  .overlay { padding-top: 113px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .overlay { animation: none; }
+}

@@ -7,6 +7,7 @@ import { siteConfig } from "@/lib/site";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { Footer } from "@/components/footer/Footer";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
+import { RouteLoading } from "@/components/motion/RouteLoading";
 import { Navbar } from "@/components/navbar/Navbar";
 import { CartDrawer } from "@/components/shop/CartDrawer";
 import { ProductCatalogProvider } from "@/components/shop/ProductCatalogProvider";
@@ -60,6 +61,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <CartSync accountId={customer?.id ?? null} />
           <Navbar accountName={customer?.name} />
           <CartDrawer />
+          <RouteLoading />
           <span id="main" tabIndex={-1} />
           {children}
           <Footer />
