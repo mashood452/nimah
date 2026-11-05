@@ -27,6 +27,21 @@ export const IconTiktok = (p: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+/** A telephone handset, for the call link beside the social icons. */
+export const IconPhone = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}>
+    <path d="M5 4h3.6l1.7 4.3-2.2 1.4a11 11 0 0 0 5.2 5.2l1.4-2.2L19 14.4V18a2 2 0 0 1-2 2A14 14 0 0 1 3 6a2 2 0 0 1 2-2Z" />
+  </svg>
+);
+
+/** An envelope, for the email link beside the social icons. */
+export const IconMail = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}>
+    <rect x="3.5" y="5.5" width="17" height="13" rx="2" />
+    <path d="m4.5 7.5 7.5 5.5 7.5-5.5" />
+  </svg>
+);
+
 /** The official WhatsApp glyph (speech bubble with handset), drawn in the current text colour. */
 export const IconWhatsapp = (p: SVGProps<SVGSVGElement>) => (
   <svg {...base} fill="currentColor" {...p}>

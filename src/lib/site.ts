@@ -18,7 +18,7 @@ export const siteConfig = {
   /** Full profile URLs, for example "https://www.instagram.com/yourhandle". Empty ones are hidden. */
   social: {
     instagram: "",
-    facebook: "",
+    facebook: "https://www.facebook.com/nimahopticals/",
     tiktok: "",
     whatsapp: "https://wa.me/971502128613",
   },

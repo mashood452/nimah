@@ -3,7 +3,7 @@ import Link from "next/link";
 import { siteConfig } from "@/lib/site";
 import { IconArrow } from "../navbar/icons";
 import { footerColumns, legalLinks } from "./footer-data";
-import { IconFacebook, IconInstagram, IconTiktok, IconWhatsapp } from "./social-icons";
+import { IconFacebook, IconInstagram, IconMail, IconPhone, IconTiktok, IconWhatsapp } from "./social-icons";
 import styles from "./Footer.module.css";
 
 /** Cached so the current year is computed once, not on every request. */
@@ -12,16 +12,17 @@ async function Year() {
   return String(new Date().getFullYear());
 }
 
-const socials = [
-  { key: "instagram", label: "Instagram", Icon: IconInstagram },
-  { key: "facebook", label: "Facebook", Icon: IconFacebook },
-  { key: "tiktok", label: "TikTok", Icon: IconTiktok },
-  { key: "whatsapp", label: "WhatsApp", Icon: IconWhatsapp },
-] as const;
-
 export function Footer() {
   const { contact, social } = siteConfig;
-  const activeSocials = socials.filter((s) => social[s.key]);
+  // The icon row, in this order. An icon is shown only once its link is set in siteConfig, so nothing points nowhere.
+  const activeSocials = [
+    { key: "whatsapp", label: "Nimah on WhatsApp", href: social.whatsapp, Icon: IconWhatsapp, external: true },
+    { key: "phone", label: `Call ${siteConfig.name}`, href: contact.phone ? `tel:${contact.phone.replace(/\s+/g, "")}` : "", Icon: IconPhone, external: false },
+    { key: "email", label: `Email ${siteConfig.name}`, href: contact.email ? `mailto:${contact.email}` : "", Icon: IconMail, external: false },
+    { key: "facebook", label: "Nimah on Facebook", href: social.facebook, Icon: IconFacebook, external: true },
+    { key: "tiktok", label: "Nimah on TikTok", href: social.tiktok, Icon: IconTiktok, external: true },
+    { key: "instagram", label: "Nimah on Instagram", href: social.instagram, Icon: IconInstagram, external: true },
+  ].filter((s) => s.href);
   const hasContact = Object.values(contact).some(Boolean);
 
   return (
@@ -47,9 +48,9 @@ export function Footer() {
           </p>
           {activeSocials.length > 0 && (
             <ul className={styles.socials}>
-              {activeSocials.map(({ key, label, Icon }) => (
+              {activeSocials.map(({ key, label, href, Icon, external }) => (
                 <li key={key}>
-                  <a href={social[key]} target="_blank" rel="noopener noreferrer" aria-label={`Nimah on ${label}`}>
+                  <a href={href} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})} aria-label={label}>
                     <Icon />
                   </a>
                 </li>
