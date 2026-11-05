@@ -67,9 +67,10 @@ export function ProductCard({ product: p }: { product: Product }) {
           <span className={styles.row}>
             <span className={styles.price}><Price amount={p.price} /></span>
             <span className={styles.swatches} aria-hidden="true">
-              {p.swatches.slice(0, 3).map((c) => (
+              {p.swatches.slice(0, 4).map((c) => (
                 <i key={c} style={{ background: c }} />
               ))}
+              {p.swatches.length > 4 && <b className={styles.swatchMore}>+{p.swatches.length - 4}</b>}
             </span>
           </span>
         </span>

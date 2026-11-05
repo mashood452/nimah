@@ -110,12 +110,18 @@
   height: 100%;
   background: #ffffff;
   border: 1px solid var(--nm-line);
-  transition: border-color 0.3s, box-shadow 0.4s;
+  transition: border-color 0.3s, box-shadow 0.4s, transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .card:hover,
 .card:focus-within {
   border-color: var(--nm-accent-2);
-  box-shadow: 0 28px 50px -30px rgba(60, 37, 42, 0.4);
+  box-shadow: 0 32px 54px -30px rgba(60, 37, 42, 0.45);
+}
+/* a gentle lift, only where there is a pointer to hover with */
+@media (hover: hover) {
+  .card:hover {
+    transform: translateY(-4px);
+  }
 }
 .link {
   display: flex;
@@ -237,6 +243,16 @@
   line-height: 1.15;
   letter-spacing: -0.02em;
   color: inherit;
+  /* long names stop at two lines so every card in a row keeps the same height */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  transition: color 0.25s;
+}
+.card:hover .name {
+  color: var(--nm-accent);
 }
 /* stretches the name's link over the whole card; the heart and bag buttons sit above it */
 .name::after {
@@ -253,27 +269,41 @@
   outline-offset: -2px;
 }
 .sub {
-  margin-top: 6px;
+  /* keeps clear space above the rule even when every card in the row is the same height */
+  margin: 6px 0 16px;
   font-size: 13.5px;
   line-height: 1.45;
   color: var(--nm-muted);
 }
 .row {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   margin-top: auto;
-  padding-top: 18px;
+  padding-top: 14px;
+}
+/* a fine rule separates the details from the price */
+.row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: var(--nm-line);
 }
 .price {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
+  letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
   color: var(--nm-accent);
 }
 .swatches {
   display: flex;
+  align-items: center;
   gap: 6px;
 }
 .swatches i {
@@ -282,6 +312,16 @@
   height: 13px;
   border-radius: 50%;
   box-shadow: 0 0 0 1px #ffffff, 0 0 0 2px rgba(60, 37, 42, 0.2);
+  transition: box-shadow 0.25s;
+}
+.card:hover .swatches i {
+  box-shadow: 0 0 0 1px #ffffff, 0 0 0 2px rgba(60, 37, 42, 0.45);
+}
+.swatchMore {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--nm-muted);
 }
 
 /* quick add: round bag button on the name row, lifted a little above it */
