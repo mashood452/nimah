@@ -7,7 +7,7 @@ export function AuthLayout({ signup, children }: { signup?: boolean; children: R
   return <main className={styles.authPage}>
     <div className={styles.authGrid}>
       <aside className={styles.story}>
-        <Image src={signup ? "/images/account/signup-editorial.webp" : "/images/account/login-editorial.webp"} alt={signup ? "Burgundy optical frames with an ivory case on sunlit travertine" : "Man wearing gold optical frames beside a sunlit window"} fill priority sizes="(max-width: 900px) 100vw, 50vw" />
+        <div className={styles.storyMedia}><Image src={signup ? "/images/account/signup-editorial.webp" : "/images/account/login-editorial.webp"} alt={signup ? "Burgundy optical frames with an ivory case on sunlit travertine" : "Man wearing gold optical frames beside a sunlit window"} fill priority sizes="(max-width: 900px) 220px, 560px" /></div>
         <div className={styles.storyContent}><span className={styles.eyebrow}>A clearer perspective</span><h2>Good to see you.</h2><p>Thoughtfully chosen eyewear.<br />A little more personal.</p><Link href="/shop">Explore the collection <span aria-hidden="true">↗</span></Link></div>
       </aside>
       <section className={styles.formPanel} aria-labelledby="auth-title">

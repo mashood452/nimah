@@ -62,8 +62,25 @@
   font-weight: 600;
   color: var(--nm-accent);
 }
-.heroPhoto {
+/* 4:5 portrait photos (1200 x 1500 px) capped in width, so they sit beside the words instead of dominating */
+.heroPhoto,
+.faqPhoto {
+  justify-self: end;
+  width: 100%;
+  max-width: 420px;
   min-width: 0;
+}
+
+/* ============ questions ============ */
+.faq {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  align-items: start;
+  gap: 80px;
+}
+.faqPhoto {
+  position: sticky;
+  top: 140px;
 }
 
 /* ============ jump links ============ */
@@ -251,7 +268,8 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .fitting,
-  .care {
+  .care,
+  .faq {
     gap: 56px;
   }
 }
@@ -281,6 +299,16 @@
   }
   .tableBlock {
     margin-top: 56px;
+  }
+  .faq {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
+  .heroPhoto,
+  .faqPhoto {
+    position: static;
+    justify-self: center;
+    max-width: 320px;
   }
 }
 @media (max-width: 700px) {

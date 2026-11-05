@@ -107,7 +107,7 @@ export default function ContactLensesPage() {
               name="hero"
               alt="Woman holding a clear contact lens on a clean fingertip beside her face in warm window light"
               ratio="4 / 5"
-              sizes="(max-width: 900px) 100vw, 40vw"
+              sizes="(max-width: 900px) 320px, 420px"
               preload
             />
           </div>
@@ -300,8 +300,21 @@ export default function ContactLensesPage() {
 
       {/* ---------- questions ---------- */}
       <section id="faq" className={`${pageStyles.section} ${pageStyles.sectionTint}`} aria-labelledby="cl-faq">
-        <SectionHead eyebrow="Questions" title="Contact lens questions, answered" id="cl-faq" />
-        <FaqList items={faqs} group="contact-lenses" />
+        <div className={styles.faq}>
+          <div>
+            <SectionHead eyebrow="Questions" title="Contact lens questions, answered" id="cl-faq" />
+            <FaqList items={faqs} group="contact-lenses" />
+          </div>
+          <div className={styles.faqPhoto}>
+            <PhotoSlot
+              folder={IMAGE_FOLDER}
+              name="faq"
+              alt="Nimah Opticals team member answering a customer's questions about contact lenses"
+              ratio="4 / 5"
+              sizes="(max-width: 900px) 320px, 420px"
+            />
+          </div>
+        </div>
       </section>
 
       <CtaBand

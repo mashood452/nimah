@@ -1,17 +1,19 @@
 .authPage { background: var(--nm-surface); padding: 56px var(--gutter) 80px; }
-.authGrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); max-width: 1280px; margin: 0 auto; background: #fff; border: 1px solid var(--nm-line); container-type: inline-size; }
+.authGrid { display: grid; grid-template-columns: minmax(0, 0.7fr) minmax(0, 1fr); max-width: 1280px; margin: 0 auto; background: #fff; border: 1px solid var(--nm-line); }
 /*
- * The photos are portrait 2:3. The panel is always at least 1.5x as tall as it is wide (75cqw = half the grid x 1.5),
- * so "cover" can only ever trim the sides when the form is taller, never the top or bottom of the picture.
+ * Brand panel: a framed photo in a fixed 4:5 portrait frame, with the words underneath on the brand brown.
+ * The frame never changes shape, so a 4:5 photo (for example 1200 x 1500 px) always shows in full. If the form is
+ * taller than the panel, the brown simply continues below the words; the photo is never stretched or cut.
  */
-.story { position: relative; min-height: calc(75cqw + 2px); color: #fff; background: var(--nm-accent); overflow: hidden; }
-.story > img { object-fit: cover; object-position: center top; }
-.story::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(31, 26, 27, .08) 25%, rgba(31, 26, 27, .83)); }
-.storyContent { position: absolute; z-index: 1; bottom: 56px; left: 48px; right: 40px; }
+.story { display: flex; flex-direction: column; gap: 32px; padding: 28px 28px 40px; color: #fff; background: var(--nm-accent); }
+.storyMedia { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: var(--nm-accent-2); }
+.storyMedia img { object-fit: cover; object-position: center; }
+.storyContent { padding: 0 12px; }
 .eyebrow { display: block; margin: 0 0 20px; font-size: 11px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; }
-.story h2 { margin: 0 0 20px; font-size: clamp(36px, 4vw, 58px); font-weight: 500; line-height: 1.07; letter-spacing: -.045em; }
-.story p { font-size: 17px; line-height: 1.7; color: rgba(255,255,255,.85); }
-.story a { display: inline-flex; gap: 32px; margin-top: 24px; font-size: 12px; letter-spacing: .1em; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,.55); }
+.story .eyebrow { margin-bottom: 14px; color: var(--nm-champagne); }
+.story h2 { margin: 0 0 14px; font-size: clamp(30px, 3vw, 42px); font-weight: 500; line-height: 1.08; letter-spacing: -.04em; }
+.story p { margin: 0; font-size: 16px; line-height: 1.7; color: rgba(255,255,255,.82); }
+.story a { display: inline-flex; gap: 32px; margin-top: 22px; font-size: 12px; letter-spacing: .1em; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,.55); }
 .formPanel { padding: 40px clamp(28px, 4vw, 64px) 48px; }
 .breadcrumb { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 48px; color: var(--nm-muted); font-size: 12px; }
 .breadcrumb a:hover { text-decoration: underline; }
@@ -82,12 +84,14 @@
 @media (max-width: 900px) {
   .authPage { padding: 28px var(--gutter) 48px; }
   .authGrid { grid-template-columns: minmax(0, 1fr); max-width: 600px; }
-  /* one column: the form comes first, and the whole photo (full width x 1.5) sits below it, uncropped */
-  .story { order: 2; min-height: calc(150cqw + 2px); }
-  .storyContent { left: 28px; bottom: 28px; }
-  .story h2 { font-size: 38px; margin-bottom: 12px; }
-  .story .eyebrow { margin-bottom: 12px; }
-  .story p, .story a { display: none; }
+  /* one column: the form comes first, then a compact brand card with the same 4:5 photo beside the words */
+  .story { order: 2; flex-direction: row; align-items: center; gap: 22px; padding: 20px; }
+  .storyMedia { flex: 0 0 min(38%, 200px); }
+  .storyContent { padding: 0; min-width: 0; }
+  .story h2 { font-size: clamp(24px, 6vw, 32px); margin-bottom: 8px; }
+  .story .eyebrow { margin-bottom: 10px; letter-spacing: .18em; }
+  .story p { font-size: 14px; line-height: 1.6; }
+  .story a { margin-top: 14px; }
   .formPanel { padding: 28px; }
   .breadcrumb { margin-bottom: 32px; }
   .summary { grid-template-columns: minmax(0, 1fr); gap: 24px; }

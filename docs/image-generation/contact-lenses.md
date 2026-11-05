@@ -30,6 +30,7 @@ no watermark, no collage, no border. Natural, healthy-looking eyes, relaxed expr
 | `type-specialist` | 1200 x 900 | 4:3 | A specialist lens being examined during a fitting, clinical but warm. |
 | `fitting` | 1200 x 1500 | 4:5 | An eye care professional carrying out a contact lens fitting, friendly and reassuring. |
 | `care` | 1200 x 1500 | 4:5 | Clean hands holding a lens case and fresh solution, bright bathroom or desk, tidy and calm. |
+| `faq` | 1200 x 1500 | 4:5 | Beside the questions: a friendly team member talking a customer through contact lenses at the counter. |
 
 Keep every file under about 200 KB (WebP quality around 80). The site resizes them for each screen.
 
