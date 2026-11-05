@@ -1,0 +1,196 @@
+/* Styles that are only used by the coloured lenses page. The hero, jump links, comparison, fitting, care and FAQ
+   layouts are shared with the contact lenses page (ContactLenses.module.css). */
+
+/* ============ shades ============ */
+.shades {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.shade {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #ffffff;
+  border: 1px solid var(--nm-line);
+  transition: border-color 0.3s, box-shadow 0.4s;
+}
+.shade:hover {
+  border-color: var(--nm-accent-2);
+  box-shadow: 0 26px 44px -30px rgba(60, 37, 42, 0.4);
+}
+.shade > div:first-child {
+  border: 0;
+  border-bottom: 1px solid var(--nm-line);
+}
+.shadeBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  padding: 26px 28px 30px;
+}
+.shadeHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.dot {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--inner), var(--outer));
+  box-shadow: 0 0 0 1px #ffffff, 0 0 0 2px rgba(60, 37, 42, 0.25);
+}
+.shadeTitle {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.shadeText {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: var(--nm-muted);
+}
+.suits {
+  margin: auto 0 0;
+  padding-top: 18px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--nm-muted);
+  border-top: 1px solid var(--nm-line);
+}
+.suits strong {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--nm-accent);
+}
+
+/* WhatsApp button at the foot of each shade card */
+.shadeWa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 48px;
+  margin-top: 6px;
+  padding: 0 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--nm-accent);
+  border: 1px solid var(--nm-accent);
+  transition: color 0.25s, background-color 0.25s;
+}
+.shadeWa svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.shadeWa:hover {
+  color: #ffffff;
+  background: var(--nm-accent);
+}
+.shadeWa:focus-visible {
+  outline: 2px solid var(--nm-accent);
+  outline-offset: 3px;
+}
+
+/* ============ single comparison slider ============ */
+.compareOne {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  align-items: center;
+  gap: 72px;
+}
+.compareOne h3 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.compareOne p {
+  max-width: 44ch;
+  margin: 14px 0 0;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--nm-muted);
+}
+
+/* ============ fitting photo branding ============ */
+.fittingImage {
+  position: relative;
+  isolation: isolate;
+}
+
+.photoBrand {
+  position: absolute;
+  bottom: clamp(12px, 2%, 16px);
+  left: clamp(12px, 3%, 20px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: clamp(176px, 42%, 224px);
+  padding: 10px 14px;
+  border: 1px solid rgba(60, 37, 42, 0.12);
+  border-radius: 4px;
+  background: rgba(255, 251, 245, 0.94);
+  box-shadow: 0 6px 20px rgba(60, 37, 42, 0.08);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+.photoBrandMark {
+  flex: none;
+  width: 26px;
+  height: auto;
+}
+
+.photoBrandDivider {
+  flex: none;
+  width: 1px;
+  height: 24px;
+  background: rgba(60, 37, 42, 0.16);
+}
+
+.photoBrandWord {
+  flex: 1;
+  min-width: 0;
+  width: 0;
+  height: auto;
+}
+
+/* ============ responsive ============ */
+@media (max-width: 1200px) {
+  .shades {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .compareOne {
+    gap: 48px;
+  }
+}
+@media (max-width: 900px) {
+  .compareOne {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+}
+@media (max-width: 700px) {
+  .shades {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+}

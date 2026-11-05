@@ -15,6 +15,8 @@ export type LensType = {
   /** photo file name (without extension) and its description, used once the photo is added */
   image: string;
   imageAlt: string;
+  /** a page with more detail on this type, if there is one */
+  href?: string;
 };
 
 export const lensTypes: LensType[] = [
@@ -67,6 +69,7 @@ export const lensTypes: LensType[] = [
     care: "The same as a clear lens of that type",
     image: "type-coloured",
     imageAlt: "Close-up of an eye wearing a natural-looking coloured contact lens",
+    href: "/coloured-lenses",
   },
   {
     slug: "specialist-lenses",
@@ -114,8 +117,8 @@ export const comparisons = [
     key: "clarity",
     title: "Everyday clarity",
     text: "Streets, signs, faces and screens, sharp from edge to edge. Contact lenses sit on the eye, so the whole field of view stays clear.",
-    before: { image: "clarity-before", label: "Without correction", alt: "Everyday street scene blurred, as seen without vision correction" },
-    after: { image: "clarity-after", label: "With contact lenses", alt: "The same street scene, sharp and clear with contact lenses" },
+    before: { image: "clarity-before-v2", label: "Without correction", alt: "Leafy neighbourhood cafe street with sandstone storefronts, blurred to illustrate uncorrected vision" },
+    after: { image: "clarity-after-v2", label: "With contact lenses", alt: "The same sunlit neighbourhood cafe street, sharp and clear to illustrate corrected vision" },
     art: "chart" as const,
     blur: 6,
   },
@@ -123,8 +126,8 @@ export const comparisons = [
     key: "active",
     title: "Freedom to move",
     text: "No frames to slip, fog up or get in the way. Lenses move with you, which many people like for sport, travel and busy days.",
-    before: { image: "active-before", label: "Without correction", alt: "Outdoor activity scene blurred, as seen without vision correction" },
-    after: { image: "active-after", label: "With contact lenses", alt: "The same outdoor scene, sharp and clear with contact lenses" },
+    before: { image: "active-before-v2", label: "Without correction", alt: "Coastal jogging path beside a sandy beach and dune grass, blurred to illustrate uncorrected vision" },
+    after: { image: "active-after-v2", label: "With contact lenses", alt: "The same coastal jogging path, beach and dune grass, sharp and clear to illustrate corrected vision" },
     art: "chart" as const,
     blur: 6,
   },

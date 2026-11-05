@@ -26,6 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/eyeglasses",
     ...groups.eyeglasses.collections.map((c) => `/eyeglasses/${c.slug}`),
     "/contact-lenses",
+    "/coloured-lenses",
     "/lenses",
     ...lensGuides.map((g) => `/lenses/${g.slug}`),
     "/blog",

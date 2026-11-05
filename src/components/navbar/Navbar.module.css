@@ -643,6 +643,15 @@
 }
 
 /* ---------- responsive ---------- */
+/* just above the burger breakpoint six links are tight, so they sit a little closer instead of running into the logo */
+@media (min-width: 1180px) and (max-width: 1359px) {
+  .primary ul {
+    gap: 16px;
+  }
+  .link {
+    letter-spacing: 0.14em;
+  }
+}
 @media (max-width: 1179px) {
   .header {
     --bar-full: 76px;

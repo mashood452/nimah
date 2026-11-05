@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { pageImage } from "@/lib/page-images";
-import { PlaceholderArt } from "./PlaceholderArt";
+import { PlaceholderArt, type ArtKind, type IrisTone } from "./PlaceholderArt";
 import styles from "./Media.module.css";
 
 /**
@@ -15,6 +15,8 @@ export function PhotoSlot({
   sizes = "(max-width: 900px) 100vw, 50vw",
   preload = false,
   className = "",
+  art = "scene",
+  tone,
 }: {
   folder: string;
   name: string;
@@ -24,6 +26,10 @@ export function PhotoSlot({
   sizes?: string;
   preload?: boolean;
   className?: string;
+  /** The artwork drawn while the photo is missing. */
+  art?: ArtKind;
+  /** Colours for the "iris" artwork, for example to show a shade of eye colour. */
+  tone?: IrisTone;
 }) {
   const src = pageImage(folder, name);
   return (
@@ -32,7 +38,7 @@ export function PhotoSlot({
         <Image src={src} alt={alt} fill sizes={sizes} preload={preload} className={styles.photo} />
       ) : (
         <>
-          <PlaceholderArt kind="scene" />
+          <PlaceholderArt kind={art} tone={tone} />
           {process.env.NODE_ENV !== "production" && (
             <span className={styles.hint}>Add /images/{folder}/{name}.webp</span>
           )}

@@ -4,10 +4,14 @@
  */
 export type ArtKind = "chart" | "iris" | "scene";
 
+/** The two colours of the "iris" artwork: the outer ring and the lighter inner ring. */
+export type IrisTone = { outer: string; inner: string };
+
 const ink = "#3c252a";
 const champagne = "#e3c4a4";
+const defaultTone: IrisTone = { outer: "#9a6b43", inner: "#c9996a" };
 
-export function PlaceholderArt({ kind = "scene" }: { kind?: ArtKind }) {
+export function PlaceholderArt({ kind = "scene", tone = defaultTone }: { kind?: ArtKind; tone?: IrisTone }) {
   return (
     <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="presentation" aria-hidden="true" focusable="false" style={{ width: "100%", height: "100%", display: "block" }}>
       <rect width="400" height="300" fill="#f6eeea" />
@@ -26,8 +30,8 @@ export function PlaceholderArt({ kind = "scene" }: { kind?: ArtKind }) {
       {kind === "iris" && (
         <g>
           <ellipse cx="200" cy="150" rx="168" ry="86" fill="#fff" stroke={ink} strokeOpacity="0.25" />
-          <circle cx="200" cy="150" r="78" fill="#9a6b43" stroke={ink} strokeOpacity="0.5" strokeWidth="2" />
-          <circle cx="200" cy="150" r="60" fill="#c9996a" />
+          <circle cx="200" cy="150" r="78" fill={tone.outer} stroke={ink} strokeOpacity="0.5" strokeWidth="2" />
+          <circle cx="200" cy="150" r="60" fill={tone.inner} />
           <circle cx="200" cy="150" r="44" fill={champagne} />
           <g stroke={ink} strokeOpacity="0.22" strokeWidth="1.5">
             {Array.from({ length: 24 }, (_, i) => {

@@ -17,11 +17,11 @@ no watermark, no collage, no border. Natural, healthy-looking eyes, relaxed expr
 
 | File name (without extension) | Size (px) | Ratio | What it shows |
 | --- | --- | --- | --- |
-| `hero` | 1200 x 1500 | 4:5 | Smiling person gently putting in a contact lens, soft window light, ivory and champagne background. |
-| `clarity-before` | 1600 x 1200 | 4:3 | A busy, bright everyday scene: a street cafe, signs, people walking. See "Before and after" below. |
-| `clarity-after` | 1600 x 1200 | 4:3 | The same scene, framed exactly the same, sharp and clear. |
-| `active-before` | 1600 x 1200 | 4:3 | An active outdoor moment: jogging, cycling or a beach walk. See "Before and after" below. |
-| `active-after` | 1600 x 1200 | 4:3 | The same scene, framed exactly the same, sharp and clear. |
+| `hero-v2` | 1120 x 1400 | 4:5 | Macro close-up of a transparent contact lens on a fingertip. The lens is the main subject, against an ivory, champagne and burgundy background. |
+| `clarity-before-v2` | 1200 x 900 | 4:3 | A leafy neighbourhood cafe street with low-rise sandstone storefronts, without a skyline or landmarks. See "Before and after" below. |
+| `clarity-after-v2` | 1200 x 900 | 4:3 | The same scene, framed exactly the same, sharp and clear. |
+| `active-before-v2` | 1200 x 900 | 4:3 | Joggers on an open coastal path beside a sandy beach and dune grass, without buildings or landmarks. See "Before and after" below. |
+| `active-after-v2` | 1200 x 900 | 4:3 | The same scene, framed exactly the same, sharp and clear. |
 | `type-daily` | 1200 x 900 | 4:3 | Close-up of a daily disposable lens resting on a fingertip, clean macro shot. |
 | `type-monthly` | 1200 x 900 | 4:3 | A monthly lens in a clean lens case with fresh solution, ivory surface. |
 | `type-toric` | 1200 x 900 | 4:3 | A toric lens seen from the side, showing its curved shape, macro shot. |

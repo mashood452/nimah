@@ -9,6 +9,7 @@ export const footerColumns: FooterColumn[] = [
       { label: "Blue-Cut Glasses", href: "/blue-light-glasses" },
       { label: "Eyeglasses", href: "/eyeglasses" },
       { label: "Contact Lenses", href: "/contact-lenses" },
+      { label: "Coloured Lenses", href: "/coloured-lenses" },
       { label: "New Arrivals", href: "/new-arrivals" },
     ],
   },

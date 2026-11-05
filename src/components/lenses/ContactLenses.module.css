@@ -218,6 +218,25 @@
   color: var(--nm-accent);
 }
 
+.typeLink {
+  align-self: flex-start;
+  padding-bottom: 3px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--nm-accent);
+  border-bottom: 1px solid var(--nm-accent-2);
+  transition: border-color 0.25s;
+}
+.typeLink:hover {
+  border-color: var(--nm-accent);
+}
+.typeLink:focus-visible {
+  outline: 2px solid var(--nm-accent);
+  outline-offset: 4px;
+}
+
 .tableBlock {
   margin-top: 72px;
 }

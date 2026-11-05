@@ -1,5 +1,7 @@
 # Generated contact-lens imagery
 
+The hero and both comparison scenes were replaced on 5 November 2026. See [the refresh notes](contact-lenses-refresh.md) for the current versioned filenames and generation prompts. The original assets and prompts below are retained for reference.
+
 Created with the built-in image generation tool for `/contact-lenses`. Optimized as WebP for the website. No external stock images or CLI generation were used.
 
 All final files are in `public/images/contact-lenses/`. Portraits are 1120 × 1400 px, lens cards 1200 × 900 px, and outdoor comparison scenes 1440 × 1080 px. The `clarity-before.webp` and `active-before.webp` files are identical copies of their matching `-after` images; the existing slider applies the illustrative blur at runtime, keeping both views aligned. These are illustrative images rather than photographs of specific branded products or measured visual outcomes.

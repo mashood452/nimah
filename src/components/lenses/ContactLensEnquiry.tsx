@@ -6,14 +6,17 @@ import styles from "./ContactLensEnquiry.module.css";
 import { Recaptcha, useRecaptcha } from "../account/Recaptcha";
 import { IconArrow } from "../navbar/icons";
 import { IconWhatsapp } from "../footer/social-icons";
-import { ACCEPTED_FILES, MAX_FILE_BYTES, MAX_FILES } from "@/lib/contact-lens-enquiry";
+import { ACCEPTED_FILES, MAX_FILE_BYTES, MAX_FILES, type EnquiryTopic } from "@/lib/contact-lens-enquiry";
 import { DEFAULT_PHONE_COUNTRY, internationalPhone, phoneCountries } from "@/lib/phone-countries";
 
 const MB = MAX_FILE_BYTES / 1024 / 1024;
 const ACCEPTED = /\.(jpe?g|png|webp|heic|heif|pdf)$/i;
 
-/** "Request a callback" button that opens a pop-up form: name, phone and up to three prescription files. */
-export function ContactLensEnquiry({ whatsappHref }: { whatsappHref?: string }) {
+/**
+ * "Request a callback" button that opens a pop-up form: name, phone and, for contact lenses, up to three prescription
+ * files. With `topic="coloured"` (fashion lenses) there is no prescription step: just a name and a phone number.
+ */
+export function ContactLensEnquiry({ whatsappHref, topic = "contact" }: { whatsappHref?: string; topic?: EnquiryTopic }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [open, setOpen] = useState(false);
 
@@ -39,7 +42,7 @@ export function ContactLensEnquiry({ whatsappHref }: { whatsappHref?: string }) 
         onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}
       >
         {/* The form (and the reCAPTCHA script it needs) only loads once the pop-up is opened. */}
-        {open && <EnquiryForm whatsappHref={whatsappHref} onClose={() => setOpen(false)} />}
+        {open && <EnquiryForm whatsappHref={whatsappHref} topic={topic} onClose={() => setOpen(false)} />}
       </dialog>
     </>
   );
@@ -47,7 +50,8 @@ export function ContactLensEnquiry({ whatsappHref }: { whatsappHref?: string }) 
 
 type Errors = Partial<Record<"name" | "phone" | "files", string>>;
 
-function EnquiryForm({ whatsappHref, onClose }: { whatsappHref?: string; onClose: () => void }) {
+function EnquiryForm({ whatsappHref, topic, onClose }: { whatsappHref?: string; topic: EnquiryTopic; onClose: () => void }) {
+  const coloured = topic === "coloured";
   const { ready, executeCaptcha } = useRecaptcha();
   const [files, setFiles] = useState<File[]>([]);
   const [tooMany, setTooMany] = useState(false);
@@ -97,7 +101,8 @@ function EnquiryForm({ whatsappHref, onClose }: { whatsappHref?: string; onClose
       body.set("name", name);
       body.set("country", country);
       body.set("phone", phone);
-      files.forEach((f) => body.append("files", f, f.name));
+      body.set("topic", topic);
+      if (!coloured) files.forEach((f) => body.append("files", f, f.name));
       body.set("captchaToken", await executeCaptcha("contact_lens"));
       const response = await fetch("/api/forms/contact-lenses", { method: "POST", body });
       const result = await response.json().catch(() => ({}));
@@ -124,14 +129,18 @@ function EnquiryForm({ whatsappHref, onClose }: { whatsappHref?: string; onClose
         <div className={styles.done} role="status">
           <p className={pageStyles.eyebrow}>Request sent</p>
           <h2 id="cle-title" className={styles.title}>Thank you, we will be in touch</h2>
-          <p className={styles.intro}>Our team will review your details and call or message you shortly about contact lenses.</p>
+          <p className={styles.intro}>Our team will review your details and call or message you shortly about {coloured ? "coloured lenses" : "contact lenses"}.</p>
           <button type="button" className={pageStyles.btnPrimary} onClick={onClose}>Close</button>
         </div>
       ) : (
         <>
-          <p className={pageStyles.eyebrow}>Contact lenses</p>
+          <p className={pageStyles.eyebrow}>{coloured ? "Coloured lenses" : "Contact lenses"}</p>
           <h2 id="cle-title" className={styles.title}>Request a callback</h2>
-          <p className={styles.intro}>Leave your name and number and, if you have one, your prescription. Our team will call you back about contact lenses.</p>
+          <p className={styles.intro}>
+            {coloured
+              ? "Leave your name and number and our team will call you back about coloured lenses and the shades we have."
+              : "Leave your name and number and, if you have one, your prescription. Our team will call you back about contact lenses."}
+          </p>
 
           <form className={pageStyles.form} onSubmit={onSubmit} noValidate>
             <div className={pageStyles.field}>
@@ -155,6 +164,7 @@ function EnquiryForm({ whatsappHref, onClose }: { whatsappHref?: string; onClose
               {errors.phone && <span id="cle-phone-err" className={pageStyles.fieldError}>{errors.phone}</span>}
             </div>
 
+            {!coloured && (
             <div className={pageStyles.field}>
               <label htmlFor="cle-files">Prescription (optional)</label>
               <input ref={fileInput} id="cle-files" type="file" multiple accept={ACCEPTED_FILES} onChange={addFiles} className={styles.fileInput}
@@ -184,6 +194,7 @@ function EnquiryForm({ whatsappHref, onClose }: { whatsappHref?: string; onClose
               )}
               {errors.files && <span className={pageStyles.fieldError} role="alert">{errors.files}</span>}
             </div>
+            )}
 
             <p className={pageStyles.formNote}>
               We only use your details to help with your request. See our <a href="/privacy">Privacy policy</a>.

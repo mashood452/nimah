@@ -5,7 +5,7 @@ import { sendEmail, type EmailAttachment } from "@/lib/email/smtp";
 import { contactLensEnquiryEmail } from "@/lib/email/templates";
 import { internationalPhone, phoneCountries } from "@/lib/phone-countries";
 import { siteConfig } from "@/lib/site";
-import { MAX_FILE_BYTES, MAX_FILES } from "@/lib/contact-lens-enquiry";
+import { MAX_FILE_BYTES, MAX_FILES, type EnquiryTopic } from "@/lib/contact-lens-enquiry";
 
 // Three 5 MB files plus the text fields and multipart overhead.
 const MAX_BODY_BYTES = MAX_FILES * MAX_FILE_BYTES + 256 * 1024;
@@ -48,7 +48,9 @@ export async function POST(request: Request) {
     const phone = country ? internationalPhone(iso, String(form.get("phone") ?? "")) : null;
     if (!country || !phone) throw new AuthHttpError(422, "Please enter a valid phone number.");
 
-    const uploads = form.getAll("files").filter((f): f is File => typeof f === "object" && f !== null && "arrayBuffer" in f && f.size > 0);
+    // coloured lenses are fashion lenses with no prescription, so any file sent with that topic is ignored
+    const topic: EnquiryTopic = form.get("topic") === "coloured" ? "coloured" : "contact";
+    const uploads = topic === "coloured" ? [] : form.getAll("files").filter((f): f is File => typeof f === "object" && f !== null && "arrayBuffer" in f && f.size > 0);
     if (uploads.length > MAX_FILES) throw new AuthHttpError(422, `You can upload up to ${MAX_FILES} files. Please send any others on WhatsApp.`);
     const attachments: EmailAttachment[] = [];
     for (const [i, file] of uploads.entries()) {
@@ -62,7 +64,7 @@ export async function POST(request: Request) {
     const team = siteConfig.contact.email;
     if (!team) throw new AuthHttpError(503, "Online requests are being set up. Please message us on WhatsApp.");
     try {
-      await sendEmail({ to: team, ...contactLensEnquiryEmail({ name, phone, country: country.name, files: attachments.map((a) => a.filename) }), attachments });
+      await sendEmail({ to: team, ...contactLensEnquiryEmail({ name, phone, country: country.name, files: attachments.map((a) => a.filename), topic }), attachments });
     } catch {
       console.error("Contact lens enquiry email could not be sent. Check SMTP_URL and EMAIL_FROM.");
       throw new AuthHttpError(503, "We could not send your request just now. Please try again, or message us on WhatsApp.");

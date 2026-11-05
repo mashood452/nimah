@@ -683,7 +683,8 @@
     padding: 32px 24px 36px;
   }
   .steps {
-    --cols: 1;
+    /* !important: pages may set --cols inline (the lens pages use 2), which would otherwise win on a phone */
+    --cols: 1 !important;
     gap: 28px;
   }
   .formRow {

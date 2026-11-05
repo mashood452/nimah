@@ -10,6 +10,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { IconWhatsapp } from "@/components/footer/social-icons";
 import { ContactLensEnquiry } from "@/components/lenses/ContactLensEnquiry";
 import styles from "@/components/lenses/ContactLenses.module.css";
+import heroStyles from "@/components/lenses/ContactLensHero.module.css";
 import { comparisons, faqs, fittingSteps, IMAGE_FOLDER, lensTypes, safetyTips } from "@/lib/contact-lenses";
 import { pageImage } from "@/lib/page-images";
 import { webPageSchema } from "@/lib/schema";
@@ -101,16 +102,26 @@ export default function ContactLensesPage() {
               </li>
             </ul>
           </div>
-          <div className={styles.heroPhoto}>
-            <PhotoSlot
-              folder={IMAGE_FOLDER}
-              name="hero"
-              alt="Woman holding a clear contact lens on a clean fingertip beside her face in warm window light"
-              ratio="4 / 5"
-              sizes="(max-width: 900px) 320px, 420px"
-              preload
-            />
-          </div>
+          <figure className={heroStyles.visual}>
+            <div className={heroStyles.stage}>
+              <PhotoSlot
+                folder={IMAGE_FOLDER}
+                name="hero-v2"
+                alt="Macro close-up of a transparent contact lens resting on a fingertip, with its fine curved rim in sharp focus"
+                ratio="1 / 1.08"
+                sizes="(max-width: 520px) calc(100vw - 56px), (max-width: 900px) 464px, (max-width: 1200px) calc((100vw - 144px) * 5 / 12 - 16px), (max-width: 1320px) calc((100vw - 168px) * 5 / 12 - 16px), 464px"
+                className={heroStyles.photo}
+                preload
+              />
+            </div>
+            <figcaption className={heroStyles.caption}>
+              <div>
+                <span className={heroStyles.eyebrow}>The finer details</span>
+                <p className={heroStyles.captionTitle}>A closer look.</p>
+              </div>
+              <p className={heroStyles.captionNote}>Contact lenses,<br />individually fitted.</p>
+            </figcaption>
+          </figure>
         </div>
       </header>
 
@@ -175,6 +186,11 @@ export default function ContactLensesPage() {
                   <strong>Best for</strong>
                   {t.bestFor}
                 </p>
+                {t.href && (
+                  <Link href={t.href} className={styles.typeLink}>
+                    See the shades
+                  </Link>
+                )}
               </div>
             </li>
           ))}

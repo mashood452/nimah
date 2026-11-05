@@ -41,6 +41,12 @@
   inset: 0;
 }
 
+/* Colour comparisons need matching crops and unaltered colours on both sides. */
+.beforeInner[data-clear="true"] {
+  inset: 0;
+  filter: none;
+}
+
 /* ---------- labels ---------- */
 .tag {
   position: absolute;

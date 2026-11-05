@@ -20,6 +20,7 @@ export const announcement = {
 };
 
 export const navItems: NavItem[] = [
+  { label: "New In", href: "/new-arrivals", badge: "New" },
   {
     label: "Sunglasses",
     href: "/sunglasses",
@@ -148,7 +149,7 @@ export const navItems: NavItem[] = [
     },
   },
   { label: "Contact Lenses", href: "/contact-lenses" },
-  { label: "New In", href: "/new-arrivals", badge: "New" },
+  { label: "Coloured Lenses", href: "/coloured-lenses" },
 ];
 
 export const trending = ["Aviator", "Polarized", "Blue-cut", "Cat-eye", "Kids"];

@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
-import { PlaceholderArt, type ArtKind } from "./PlaceholderArt";
+import { PlaceholderArt, type ArtKind, type IrisTone } from "./PlaceholderArt";
 import styles from "./BeforeAfter.module.css";
 
-type Side = { src: string | null; alt: string; label: string };
+/** `tone` only changes the placeholder ("iris" artwork), so the two sides can look different before photos exist. */
+type Side = { src: string | null; alt: string; label: string; tone?: IrisTone };
 
 /**
  * Before and after comparison slider. Drag the handle (or use the arrow keys) to blend from the blurred "before"
@@ -13,7 +14,7 @@ type Side = { src: string | null; alt: string; label: string };
  *
  * `before.src` and `after.src` come from pageImage(). While a src is null a placeholder is drawn, and the placeholder
  * is blurred on the "before" side too, so the effect works before any photo is added.
- * `blur` is the blur strength in px applied to the "before" photo. Use 0 when the before photo is already blurry.
+ * `blur` is the blur strength in px applied to the "before" photo. Use 0 for colour comparisons or pre-blurred photos.
  */
 export function BeforeAfter({
   before,
@@ -103,7 +104,7 @@ export function BeforeAfter({
   const vars = { "--pos": `${pos}%`, "--blur": `${blur}px`, aspectRatio: ratio } as CSSProperties;
 
   const layer = (side: Side) =>
-    side.src ? <Image src={side.src} alt={side.alt} fill sizes={sizes} className={styles.photo} draggable={false} /> : <PlaceholderArt kind={art} />;
+    side.src ? <Image src={side.src} alt={side.alt} fill sizes={sizes} className={styles.photo} draggable={false} /> : <PlaceholderArt kind={art} tone={side.tone} />;
 
   return (
     <div
@@ -117,7 +118,7 @@ export function BeforeAfter({
     >
       <div className={styles.after}>{layer(after)}</div>
       <div className={styles.before}>
-        <div className={styles.beforeInner}>{layer(before)}</div>
+        <div className={styles.beforeInner} data-clear={blur === 0}>{layer(before)}</div>
       </div>
 
       <span className={`${styles.tag} ${styles.tagBefore}`}>{before.label}</span>
