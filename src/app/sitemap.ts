@@ -8,16 +8,30 @@ import { frameStyles } from "@/lib/styles";
 import { getProducts } from "@/lib/catalog";
 import { connection } from "next/server";
 
+type Frequency = NonNullable<MetadataRoute.Sitemap[number]["changeFrequency"]>;
+
+/**
+ * How often each kind of page really changes, so search engines know how often to come back:
+ * the shop and new arrivals are updated every day, category and product pages within a week at most,
+ * blog posts and guides about once a month, and the policies rarely.
+ */
+const DAILY: Frequency = "daily";
+const WEEKLY: Frequency = "weekly";
+const MONTHLY: Frequency = "monthly";
+const YEARLY: Frequency = "yearly";
+
+const page = (path: string, changeFrequency: Frequency) => ({ url: `${siteConfig.url}${path}`, changeFrequency });
+
 /**
  * Every public page. Pages that should not be indexed (bag, wishlist, search, account) are left out on purpose.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   await connection();
   const [products, posts] = await Promise.all([getProducts(), getPosts()]);
-  const paths = [
+
+  const daily = ["/shop", "/new-arrivals"];
+  const weekly = [
     "",
-    "/shop",
-    "/new-arrivals",
     "/sunglasses",
     ...frameStyles.map((s) => `/sunglasses/${s.shape}`),
     ...groups.sunglasses.collections.map((c) => `/sunglasses/${c.slug}`),
@@ -25,6 +39,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...groups["blue-light-glasses"].collections.map((c) => `/blue-light-glasses/${c.slug}`),
     "/eyeglasses",
     ...groups.eyeglasses.collections.map((c) => `/eyeglasses/${c.slug}`),
+  ];
+  const monthly = [
     "/contact-lenses",
     "/coloured-lenses",
     "/lenses",
@@ -33,11 +49,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/lookbook",
     "/about",
     "/contact",
-    ...legalDocs.map((d) => `/${d.slug}`),
   ];
+  const yearly = legalDocs.map((d) => `/${d.slug}`);
+
   return [
-    ...paths.map((path) => ({ url: `${siteConfig.url}${path}` })),
-    ...products.map((p) => ({ url: `${siteConfig.url}/products/${p.slug}`, lastModified: p.updatedAt })),
-    ...posts.map((p) => ({ url: `${siteConfig.url}/blog/${p.slug}`, lastModified: p.updatedAt ?? p.date })),
+    ...daily.map((path) => page(path, DAILY)),
+    ...weekly.map((path) => page(path, WEEKLY)),
+    ...monthly.map((path) => page(path, MONTHLY)),
+    ...yearly.map((path) => page(path, YEARLY)),
+    ...products.map((p) => ({ ...page(`/products/${p.slug}`, WEEKLY), lastModified: p.updatedAt })),
+    ...posts.map((p) => ({ ...page(`/blog/${p.slug}`, MONTHLY), lastModified: p.updatedAt ?? p.date })),
   ];
 }
