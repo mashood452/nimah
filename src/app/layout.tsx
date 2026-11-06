@@ -37,6 +37,15 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", images: [{ url: siteConfig.ogImage, alt: ogImageAlt }] },
   robots: { index: true, follow: true },
   verification: { google: process.env.GOOGLE_SITE_VERIFICATION },
+  // Permanent icon addresses (no build hash), in sizes that are multiples of 48 px as Google's favicon guidelines ask.
+  // The files live in /public, so these URLs never change when the site is rebuilt.
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+  },
 };
 
 export const viewport: Viewport = { themeColor: "#ffffff" };
