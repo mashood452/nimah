@@ -1,41 +1,52 @@
 /* ============ article header ============ */
 .hero {
-  padding: 32px var(--gutter) 56px;
-  background: #faf8f5;
+  padding: 36px var(--gutter) 88px;
+  background: var(--nm-surface);
   border-bottom: 1px solid var(--nm-line);
 }
-.heroInner {
-  max-width: 1280px;
-  margin-inline: auto;
-}
 .hero [aria-label="Breadcrumb"] ol {
-  margin-bottom: 36px;
+  margin-bottom: 52px;
 }
 .heroLayout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 420px;
+  grid-template-columns: minmax(0, 11fr) minmax(0, 10fr);
   align-items: center;
-  gap: 64px;
+  gap: clamp(48px, 6vw, 96px);
+}
+.heroCopy {
+  min-width: 0;
 }
 .kicker {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px 24px;
-  margin-bottom: 18px;
+  gap: 10px 18px;
+  margin-bottom: 26px;
 }
-.hero .eyebrow {
+.category {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
   margin: 0;
+  font-size: 11.5px;
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--nm-accent);
+}
+.category::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: var(--nm-accent-2);
 }
 .readingTime {
-  font-size: 13px;
-  line-height: 1.5;
+  padding-left: 18px;
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: var(--nm-muted);
-}
-.heroCopy {
-  min-width: 0;
+  border-left: 1px solid var(--nm-line);
 }
 .eyebrow {
   margin: 0 0 18px;
@@ -46,46 +57,76 @@
 }
 .title {
   margin: 0;
-  font-size: clamp(34px, 3.6vw, 52px);
+  font-size: clamp(34px, 3.5vw, 54px);
   font-weight: 600;
-  line-height: 1.08;
+  line-height: 1.06;
   letter-spacing: -0.04em;
   text-wrap: balance;
   overflow-wrap: break-word;
+  color: var(--nm-text);
 }
 .excerpt {
-  max-width: 58ch;
-  margin: 22px 0 0;
-  font-size: 17px;
+  max-width: 52ch;
+  margin: 26px 0 0;
+  font-size: 18px;
   line-height: 1.7;
   color: var(--nm-muted);
 }
-.meta {
+.byline {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 1px solid var(--nm-line);
+}
+.bylineMark {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--nm-line);
+}
+.bylineText {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.bylineName {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--nm-text);
+}
+.bylineDates {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 24px;
-  margin-top: 24px;
+  gap: 2px 18px;
   font-size: 13px;
-  line-height: 1.6;
+  line-height: 1.5;
   color: var(--nm-muted);
 }
-.author {
-  font-weight: 500;
-  color: var(--nm-accent);
+/* The picture runs flush to the right edge, in line with the navigation. A thin frame sits offset below and to the left. */
+.stage {
+  position: relative;
+  isolation: isolate;
+  padding: 0 0 22px 22px;
+}
+.stage::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 22px 22px 0 0;
+  border: 1px solid var(--nm-accent-2);
 }
 .cover {
   position: relative;
-  width: 100%;
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 1200 / 630;
   overflow: hidden;
   background: #f2e9e1;
-  border: 1px solid var(--nm-line);
-  border-radius: 6px;
+  box-shadow: 0 30px 50px -34px rgba(60, 37, 42, 0.45);
 }
 .cover img {
   object-fit: cover;
-  object-position: center 38%;
 }
 
 /* ============ article body ============ */
@@ -264,23 +305,51 @@
 }
 
 /* ============ responsive ============ */
+@media (max-width: 1100px) {
+  .heroLayout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 44px;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    padding: 24px var(--pad) 56px;
+  }
+  .hero [aria-label="Breadcrumb"] ol {
+    margin-bottom: 32px;
+  }
+  .heroLayout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
+  .kicker {
+    margin-bottom: 20px;
+  }
+  .excerpt {
+    margin-top: 20px;
+    font-size: 16.5px;
+  }
+  .byline {
+    margin-top: 28px;
+    padding-top: 22px;
+  }
+  /* on a phone the picture spans the full width, with the frame peeking out beneath it */
+  .stage {
+    padding: 0 0 14px;
+  }
+  .stage::before {
+    inset: 14px 14px 0;
+  }
+}
+
 @media (max-width: 1200px) {
   .grid {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
-@media (max-width: 1100px) {
-  .heroLayout {
-    grid-template-columns: minmax(0, 1fr) 320px;
-    gap: 40px;
-  }
-}
-
 @media (max-width: 900px) {
-  .hero {
-    padding: 24px var(--gutter) 40px;
-  }
   .body,
   .index {
     padding: 56px var(--pad);
@@ -294,20 +363,6 @@
   }
   .featuredText {
     padding: 32px 24px 36px;
-  }
-}
-
-@media (max-width: 800px) {
-  .heroLayout {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 28px;
-  }
-  .excerpt {
-    font-size: 16.5px;
-  }
-  .cover {
-    max-width: 480px;
-    aspect-ratio: 2 / 1;
   }
 }
 

@@ -38,6 +38,7 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
         : await inCategory(post.productTag.category)
       ).slice(0, 4)
     : (await getProducts()).slice(0, 4);
+  const updated = post.updatedAt && post.updatedAt.slice(0, 10) !== post.date.slice(0, 10);
   const more = (await getPosts()).filter((p) => p.slug !== post.slug);
 
   return (
@@ -56,29 +57,41 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
       />
 
       <header className={blog.hero}>
-        <div className={blog.heroInner}>
-          <Breadcrumbs
-            crumbs={[
-              { name: "Home", href: "/" },
-              { name: "Journal", href: "/blog" },
-              { name: post.title, href: `/blog/${post.slug}` },
-            ]}
-          />
-          <div className={blog.heroLayout}>
-            <div className={blog.heroCopy}>
-              <div className={blog.kicker}>
-                <p className={blog.eyebrow}>{post.category}</p>
-                <span className={blog.readingTime}>{post.readMinutes} min read</span>
-              </div>
-              <h1 className={blog.title}>{post.title}</h1>
-              <p className={blog.excerpt}>{post.excerpt}</p>
-              <div className={blog.meta}>
-                <span className={blog.author}>By {siteConfig.name}</span>
-                <time dateTime={post.date}>{formatDate(post.date)}</time>
+        <Breadcrumbs
+          crumbs={[
+            { name: "Home", href: "/" },
+            { name: "Journal", href: "/blog" },
+            { name: post.title, href: `/blog/${post.slug}` },
+          ]}
+        />
+        <div className={blog.heroLayout}>
+          <div className={blog.heroCopy}>
+            <div className={blog.kicker}>
+              <p className={blog.category}>{post.category}</p>
+              <span className={blog.readingTime}>{post.readMinutes} min read</span>
+            </div>
+            <h1 className={blog.title}>{post.title}</h1>
+            <p className={blog.excerpt}>{post.excerpt}</p>
+            <div className={blog.byline}>
+              <Image src="/brand/nimah-avatar-mark.png" alt="" width={92} height={92} className={blog.bylineMark} />
+              <div className={blog.bylineText}>
+                <span className={blog.bylineName}>{siteConfig.name}</span>
+                <span className={blog.bylineDates}>
+                  <span>
+                    Published <time dateTime={post.date}>{formatDate(post.date)}</time>
+                  </span>
+                  {updated && (
+                    <span>
+                      Updated <time dateTime={post.updatedAt}>{formatDate(post.updatedAt!)}</time>
+                    </span>
+                  )}
+                </span>
               </div>
             </div>
+          </div>
+          <div className={blog.stage}>
             <div className={blog.cover}>
-              <Image src={mediaUrl(post.image)} alt={post.imageAlt} fill preload sizes="(max-width: 520px) calc(100vw - 40px), (max-width: 800px) 480px, (max-width: 1100px) 320px, 420px" />
+              <Image src={mediaUrl(post.image)} alt={post.imageAlt} fill preload sizes="(max-width: 900px) calc(100vw - 40px), 55vw" />
             </div>
           </div>
         </div>
