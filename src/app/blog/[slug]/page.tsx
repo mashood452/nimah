@@ -56,30 +56,30 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
       />
 
       <header className={blog.hero}>
-        <Breadcrumbs
-          crumbs={[
-            { name: "Home", href: "/" },
-            { name: "Journal", href: "/blog" },
-            { name: post.title, href: `/blog/${post.slug}` },
-          ]}
-        />
-        <div className={blog.heroHeading}>
-          <div className={blog.kicker}>
-            <p className={blog.eyebrow}>{post.category}</p>
-            <span className={blog.readingTime}>{post.readMinutes} min read</span>
-          </div>
-          <h1 className={blog.title}>{post.title}</h1>
-        </div>
-        <div className={blog.heroSummary}>
-          <div className={blog.heroCopy}>
-            <p className={blog.excerpt}>{post.excerpt}</p>
-            <div className={blog.meta}>
-              <span className={blog.author}>By {siteConfig.name}</span>
-              <time dateTime={post.date}>{formatDate(post.date)}</time>
+        <div className={blog.heroInner}>
+          <Breadcrumbs
+            crumbs={[
+              { name: "Home", href: "/" },
+              { name: "Journal", href: "/blog" },
+              { name: post.title, href: `/blog/${post.slug}` },
+            ]}
+          />
+          <div className={blog.heroLayout}>
+            <div className={blog.heroCopy}>
+              <div className={blog.kicker}>
+                <p className={blog.eyebrow}>{post.category}</p>
+                <span className={blog.readingTime}>{post.readMinutes} min read</span>
+              </div>
+              <h1 className={blog.title}>{post.title}</h1>
+              <p className={blog.excerpt}>{post.excerpt}</p>
+              <div className={blog.meta}>
+                <span className={blog.author}>By {siteConfig.name}</span>
+                <time dateTime={post.date}>{formatDate(post.date)}</time>
+              </div>
             </div>
-          </div>
-          <div className={blog.cover}>
-            <Image src={mediaUrl(post.image)} alt={post.imageAlt} fill preload sizes="(max-width: 700px) 200px, 260px" />
+            <div className={blog.cover}>
+              <Image src={mediaUrl(post.image)} alt={post.imageAlt} fill preload sizes="(max-width: 520px) calc(100vw - 40px), (max-width: 800px) 480px, (max-width: 1100px) 320px, 420px" />
+            </div>
           </div>
         </div>
       </header>

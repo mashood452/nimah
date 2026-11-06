@@ -1,11 +1,21 @@
 /* ============ article header ============ */
 .hero {
-  padding: 32px var(--gutter) 48px;
-  background: var(--nm-surface);
+  padding: 32px var(--gutter) 56px;
+  background: #faf8f5;
   border-bottom: 1px solid var(--nm-line);
 }
-.heroHeading {
-  max-width: 1040px;
+.heroInner {
+  max-width: 1280px;
+  margin-inline: auto;
+}
+.hero [aria-label="Breadcrumb"] ol {
+  margin-bottom: 36px;
+}
+.heroLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  align-items: center;
+  gap: 64px;
 }
 .kicker {
   display: flex;
@@ -24,14 +34,6 @@
   line-height: 1.5;
   color: var(--nm-muted);
 }
-.heroSummary {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 260px;
-  align-items: start;
-  gap: clamp(32px, 5vw, 72px);
-  max-width: 1180px;
-  margin-top: 28px;
-}
 .heroCopy {
   min-width: 0;
 }
@@ -44,7 +46,7 @@
 }
 .title {
   margin: 0;
-  font-size: clamp(34px, 4.2vw, 62px);
+  font-size: clamp(34px, 3.6vw, 52px);
   font-weight: 600;
   line-height: 1.08;
   letter-spacing: -0.04em;
@@ -52,9 +54,9 @@
   overflow-wrap: break-word;
 }
 .excerpt {
-  max-width: 62ch;
-  margin: 0;
-  font-size: 18px;
+  max-width: 58ch;
+  margin: 22px 0 0;
+  font-size: 17px;
   line-height: 1.7;
   color: var(--nm-muted);
 }
@@ -63,7 +65,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 24px;
-  margin-top: 22px;
+  margin-top: 24px;
   font-size: 13px;
   line-height: 1.6;
   color: var(--nm-muted);
@@ -74,16 +76,16 @@
 }
 .cover {
   position: relative;
-  width: 260px;
-  max-width: 100%;
+  width: 100%;
   aspect-ratio: 3 / 2;
   overflow: hidden;
   background: #f2e9e1;
   border: 1px solid var(--nm-line);
-  border-radius: 4px;
+  border-radius: 6px;
 }
 .cover img {
   object-fit: cover;
+  object-position: center 38%;
 }
 
 /* ============ article body ============ */
@@ -268,6 +270,13 @@
   }
 }
 
+@media (max-width: 1100px) {
+  .heroLayout {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 40px;
+  }
+}
+
 @media (max-width: 900px) {
   .hero {
     padding: 24px var(--gutter) 40px;
@@ -288,17 +297,17 @@
   }
 }
 
-@media (max-width: 700px) {
-  .heroSummary {
+@media (max-width: 800px) {
+  .heroLayout {
     grid-template-columns: minmax(0, 1fr);
-    gap: 24px;
-    margin-top: 22px;
+    gap: 28px;
   }
   .excerpt {
     font-size: 16.5px;
   }
   .cover {
-    width: 200px;
+    max-width: 480px;
+    aspect-ratio: 2 / 1;
   }
 }
 
