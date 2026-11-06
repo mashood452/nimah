@@ -63,19 +63,23 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
             { name: post.title, href: `/blog/${post.slug}` },
           ]}
         />
-        <div className={blog.heroGrid}>
-          <div>
+        <div className={blog.heroHeading}>
+          <div className={blog.kicker}>
             <p className={blog.eyebrow}>{post.category}</p>
-            <h1 className={blog.title}>{post.title}</h1>
+            <span className={blog.readingTime}>{post.readMinutes} min read</span>
+          </div>
+          <h1 className={blog.title}>{post.title}</h1>
+        </div>
+        <div className={blog.heroSummary}>
+          <div className={blog.heroCopy}>
             <p className={blog.excerpt}>{post.excerpt}</p>
             <div className={blog.meta}>
-              <span>{formatDate(post.date)}</span>
-              <span>{post.readMinutes} min read</span>
-              <span>By {siteConfig.name}</span>
+              <span className={blog.author}>By {siteConfig.name}</span>
+              <time dateTime={post.date}>{formatDate(post.date)}</time>
             </div>
           </div>
           <div className={blog.cover}>
-            <Image src={mediaUrl(post.image)} alt={post.imageAlt} fill priority sizes="(max-width: 900px) 100vw, 40vw" />
+            <Image src={mediaUrl(post.image)} alt={post.imageAlt} fill preload sizes="(max-width: 700px) 200px, 260px" />
           </div>
         </div>
       </header>
